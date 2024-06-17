@@ -6,9 +6,9 @@ let ProgrammingLanguage = (function() {
 	}
 	function parser(tokens) {
 		let transpiled = []
-		let int = /[0-9]+(?!\D)/
-		let num = /[0-9]+(\.([0-9]+)?)/
-		let str = /^\"[^\"]*\"/
+		let int = /[0-9]+(?!\D)$/
+		let num = /[0-9]+\.[0-9]+$/
+		let str = /^\"[^\"]*\"$/
 		tokens.forEach(function(token) {
 			let js = {
 				token
@@ -24,6 +24,17 @@ let ProgrammingLanguage = (function() {
 			}
 			transpiled.push(js)
 		})
+		// We need another layer of looping for string values.
+		let st = false
+		let j = transpiled.length
+		let i = 0
+		for (; i < j; i += 1) {
+			if (st) {
+				
+			} else {
+				
+			}
+		}
 		return transpiled
 	}
 	return {
