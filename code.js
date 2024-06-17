@@ -32,7 +32,7 @@ let ProgrammingLanguage = (function() {
 			if (st) {
 				
 			} else {
-				
+				if (transpiled)
 			}
 		}
 		return transpiled
