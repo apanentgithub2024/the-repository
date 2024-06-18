@@ -9,7 +9,7 @@ const setup = (function(settings = {
 	}
 	const regexes = [
 		{
-			regex: /((hi(ya?)|hello|hey|howdy)(\s*))(there?)((\,)?)(\s*)(my(\s*)?)(((pal|bud(dy?)|man|friend|woman|child|([a-z]*))|\?)?)|(g'day|(good|great|marvellous|awesome)(\s*)day((,\s*)?))|(what's(\s*)shakin('|g)(\s*)my(\s*)(pal|bud(dy?)|man|friend|woman|child|bacon))|((pal|bud(dy?)|man|friend|woman|child|hey|hi|hello|([a-z]*))(,(\s*))?)(what's\s*up|what\s*is\s*up)/i,
+			regex: /((hi(ya?)|hello|hey|howdy)(\s*))(there?)((\,)?)(\s*)(my(\s*)?)(((pal|bud(dy?)|man|friend|woman|child|([a-z]*))|\?)?)|(g'day|(good|great|marvellous|awesome)(\s*)day((,\s*)?))|(what's(\s*)shakin('|g)(\s*)my(\s*)(pal|bud(dy?)|man|friend|woman|child|bacon))|((pal|bud(dy?)|man|friend|woman|child|hey|hi|hello|([a-z]*))(,(\s*))?)(what's\s*up|what\s*is\s*up)|(hello|hi|howdy|g'day|hey)(((,?)(\s*)there)?)/i,
 			responses: function(name) {
 				const hellos = (function() {
 					if (settings.personalities.includes("western")) {
