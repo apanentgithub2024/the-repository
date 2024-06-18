@@ -62,4 +62,4 @@ const setup = (function(settings = {
 			return ai
 		}
 	}
-})()
+})
