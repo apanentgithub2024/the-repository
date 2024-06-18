@@ -46,7 +46,7 @@ const setup = (function(settings = {
 			id: "how_are_you"
 		},
 		{
-			regex: /my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/i,
+			regex: /my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i,
 			responses: function(name) {
 				const r = regexes[0].responses(name)
 				const lowercase = r[0].toLowerCase() + r.slice(1)
@@ -55,7 +55,7 @@ const setup = (function(settings = {
 			id: "recognize_name"
 		},
 		{
-			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you/i,
+			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you|what\s*is\s*your\s*own\s*name|what's\s*your\s*own\s*name/i,
 			responses: function(name) {
 				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])])
 			},
@@ -71,7 +71,7 @@ const setup = (function(settings = {
 			// detect name sentences
 			const canName = !settings.personalities.some(i => i.id === "recognize_name" && i.type === "exc_response_id")
 			if (canName) {
-				response.replace(/my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/i, function(_, name) {
+				response.replace(/my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i, function(_, name) {
 					information.username = name
 				})
 			}
