@@ -41,9 +41,25 @@ const setup = (function(settings = {
 						}
 					}
 				})()
-				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (", " + (settings.personalities.includes("western") ? ra(["partner", "mate"]) : name)) + ra(["!", "."]))
+				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (Math.random() < 0.75 && !!name ? (", " + (settings.personalities.includes("western") ? ra(["partner", "mate"]) : name)) : "") + ra(["!", "."]))
 			},
 			id: "how_are_you"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
+
+	return {
+		respond: function(response) {
+			let ai = ""
+			regexes.forEach(function(item) {
+				if (item.regex.test(response)) {
+					ai += item.response() + " "
+				}
+			})
+			ai = ai.trim()
+			if (ai === "") {
+				return ra(["I couldn't understand that.", "Sorry, I couldn't catch that.", "Try breaking whatever you said in other sentences. Maybe that would help.", "I can't understand you yet. Try rewriting the sentences, that usually helps."])
+			}
+			return ai
+		}
+	}
 })()
