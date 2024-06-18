@@ -53,6 +53,13 @@ const setup = (function(settings = {
 				return Math.random() < 0.5 ? ra(["Well, ", "Well "]) + lowercase : r
 			},
 			id: "recognize_name"
+		},
+		{
+			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you/,
+			responses: function(name) {
+				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])])
+			},
+			id: "whats_your_name"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
 	const information = {
