@@ -5,6 +5,9 @@ const setup = (function(settings = {
 	personalities: [],
 	name: "UnnamedAI"
 }) {
+	const deputyp = settings.personalities.includes("deputy")
+	const human_canexperiencep = settings.personalities.includes("human_canexperience")
+	const lazyp = settings.personalities.includes("lazy")
 	function ra(array) {
 		return array[Math.floor(Math.random() * array.length)]
 	}
@@ -13,13 +16,13 @@ const setup = (function(settings = {
 			regex: /((hi(ya?)|hello|hey|howdy)(\s*))(there?)((\,)?)(\s*)(my(\s*)?)(((pal|bud(dy?)|man|friend|woman|child|([a-z]*))|\?)?)|(g'day|(good|great|marvellous|awesome)(\s*)day((,\s*)?))|(what's(\s*)shakin('|g)(\s*)my(\s*)(pal|bud(dy?)|man|friend|woman|child|bacon))|((pal|bud(dy?)|man|friend|woman|child|hey|hi|hello|([a-z]*))(,(\s*))?)(what's\s*up|what\s*is\s*up)|(hello|hi|howdy|g'day|hey)(((,?)(\s*)there)?)/i,
 			responses: function(name) {
 				const hellos = (function() {
-					if (settings.personalities.includes("western")) {
+					if (westernp) {
 						return ["Howdy", "G'day"]
 					} else {
 						return ["Hi", "Hello", "Hey"]
 					}
 				})()
-				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (settings.personalities.includes("western") ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!") + " "
+				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (westernp ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!") + " "
 			},
 			id: "greet0"
 		},
@@ -27,14 +30,14 @@ const setup = (function(settings = {
 			regex: /(how\s*are|how're)\s*you|(how's|how\s*was)\s*((((your|the|this)\s*day))((\s*today)?)|(your\s*day(\s*right\s*(now|this\s*sec(ond?))|\s*this\s*time((\s*today)?))))|(your|the|this)\s*day|(what's\s*going\s*on\s*in\s*(your\s*day|today|before\s*you\s*came)|what's\s*shakin('|g)((\s*today)?))/i,
 			responses: function(name) {
 				const replys = (function() {
-					if (settings.personalities.includes("human_canexperience")) {
-						if (settings.personalities.includes("lazy")) {
+					if (human_canexperiencep) {
+						if (lazyp) {
 							return ["I had " + ra(["fun", "a good time", "a good day", "a great day", "a fun day"])]
 						} else {
 							return ["I " + ra(["just had", "had", "experienced", "just experienced"]) + " a" + ra(["n adventure", " trip", " fun adventure", " fun trip"]), "I had a " + ra(["very ", ""]) + ra(["fun ", "great ", "awesome ", "cool "]) + ra(["day", "adventure"])]
 						}
 					} else {
-						if (settings.personalities.includes("lazy")) {
+						if (lazyp) {
 							const a = "can't experience, nor " + ra(["can I feel", "have fun", "hang out"])
 							return ["I " + ra(["unfortunately ", ""]) + a, ra(["Unfortanetly, ", ""]) + "I " + a]
 						} else {
@@ -42,7 +45,7 @@ const setup = (function(settings = {
 						}
 					}
 				})()
-				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (Math.random() < 0.75 && !!name ? (", " + (settings.personalities.includes("western") ? ra(["partner", "mate"]) : name)) : "") + ra(["!", "."])) + " "
+				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (Math.random() < 0.75 && !!name ? (", " + (westernp ? ra(["partner", "mate"]) : name)) : "") + ra(["!", "."])) + " "
 			},
 			id: "how_are_you"
 		},
@@ -58,14 +61,14 @@ const setup = (function(settings = {
 		{
 			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you|what\s*is\s*your\s*own\s*name|what's\s*your\s*own\s*name/i,
 			responses: function(name) {
-				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])])
+				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])]) + " "
 			},
 			id: "whats_your_name"
 		},
 		{
 			regex: /(you're|you\s*are)\s*((actually\s*)?)(((very|so|super)\s*)*)(smart|awesome|helpful|kind|sweet|nice|enjoyable|unique|fun(ny?)|cool|(respect|trust|appreciat(e?))(ful|worthy|able))/i,
 			responses: function(name) {
-				return settings.personalities.includes("lazy") ? ra(["Thanks!", "Thank you!", "Thank you so much!", "Thank you very much!"]) : (settings.personalities.includes("western") ? ra(["Thanks for the darn ", "Thank you for the darn ", "Thank you for the pretty darn "]) + ra(["good ", "nice ", "appreciable "]) + ra(["compliment", "honor", ""]) : ra(["Thank you!", "Thank you very much!", "Thanks!", "I appreciate the compliment!", "I like the compliment!", "I appreciate your kindness!", "I like your compliment!", "I like your compliment very much!", "Thank you so much!", "I like your compliment so much!", "I'm glad you " + ra(["honor ", "like ", "appreciate "]) + "me!"]) + " " + ra(["Even though I'm not perfect, ", "Even though I have some issues to have fixed, ", "I may not be perfect, but "]) + ra(["I can help you anytime you want!", "I can help you enjoy your day more!", "I can try to support you along the way!", "I can try to improve the more I last!", "I improve almost every day!"]))
+				return lazyp ? ra(["Thanks!", "Thank you!", "Thank you so much!", "Thank you very much!"]) : (westernp ? ra(["Thanks for the darn ", "Thank you for the darn ", "Thank you for the pretty darn "]) + ra(["good ", "nice ", "appreciable "]) + ra(["compliment", "honor", ""]) : ra(["Thank you!", "Thank you very much!", "Thanks!", "I appreciate the compliment!", "I like the compliment!", "I appreciate your kindness!", "I like your compliment!", "I like your compliment very much!", "Thank you so much!", "I like your compliment so much!", "I'm glad you " + ra(["honor ", "like ", "appreciate "]) + "me!"]) + " " + ra(["Even though I'm not perfect, ", "Even though I have some issues to have fixed, ", "I may not be perfect, but "]) + ra(["I can help you anytime you want!", "I can help you enjoy your day more!", "I can try to support you along the way!", "I can try to improve the more I last!", "I improve almost every day!"])) + " "
 			},
 			id: "compliment0"
 		}
