@@ -9,6 +9,7 @@ function superset(code) {
 		} else if (spec === "f-") {
 			return match + `[0]`
 		}
+		return match
 	})
 	return c
 }
