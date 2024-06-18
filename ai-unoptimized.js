@@ -1,4 +1,5 @@
 // UnnamedAI. I don't know how this would turn out. :/
+// Model is Basic 1.0.
 const setup = (function(settings = {
 	grammar: [],
 	personalities: [],
@@ -60,6 +61,13 @@ const setup = (function(settings = {
 				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])])
 			},
 			id: "whats_your_name"
+		},
+		{
+			regex: /(you're|you\s*are)\s*((actually\s*)?)(((very|so|super)\s*)*)(smart|awesome|helpful|kind|sweet|nice|enjoyable|unique|fun(ny?)|cool|(respect|trust|appreciat(e?))(ful|worthy|able))/i,
+			responses: function(name) {
+				return settings.personalities.includes("lazy") ? ra(["Thanks!", "Thank you!", "Thank you so much!", "Thank you very much!"]) : (settings.personalities.includes("western") ? ra(["Thanks for the darn ", "Thank you for the darn ", "Thank you for the pretty darn "]) + ra(["good ", "nice ", "appreciable "]) + ra(["compliment", "honor", ""]) : ra(["Thank you!", "Thank you very much!", "Thanks!", "I appreciate the compliment!", "I like the compliment!", "I appreciate your kindness!", "I like your compliment!", "I like your compliment very much!", "Thank you so much!", "I like your compliment so much!", "I'm glad you " + ra(["honor ", "like ", "appreciate "]) + "me!"]) + " " + ra(["Even though I'm not perfect, ", "Even though I have some issues to have fixed, ", "I may not be perfect, but "]) + ra(["I can help you anytime you want!", "I can help you enjoy your day more!", "I can try to support you along the way!", "I can try to improve the more I last!", "I improve almost every day!"])
+			},
+			id: "compliment0"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
 	const information = {
@@ -94,6 +102,7 @@ const setup = (function(settings = {
 				return ra(["I couldn't understand that.", "Sorry, I couldn't catch that.", "Try breaking whatever you said in other sentences. Maybe that would help.", "I can't understand you yet. Try rewriting the sentences, that usually helps."])
 			}
 			return ai
-		}
+		},
+		model: "Basic 1.0"
 	}
 })
