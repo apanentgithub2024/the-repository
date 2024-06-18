@@ -23,7 +23,7 @@ const setup = (function(settings = {
 			id: "greet0"
 		},
 		{
-			regex: /(how\s*are|how're)\s*you|(how's|how\s*was)\s*((((your|the|this)\s*day))((\s*today)?)|(your\s*day(\s*right\s*(now|this\s*sec(ond?))|\s*this\s*time((\s*today)?))))|(your|the|this)\s*day|(what's\s*going\s*on\s*in\s*(your\s*day|today|before\s*you\s*came)|what's\s*shakin('|g))/i,
+			regex: /(how\s*are|how're)\s*you|(how's|how\s*was)\s*((((your|the|this)\s*day))((\s*today)?)|(your\s*day(\s*right\s*(now|this\s*sec(ond?))|\s*this\s*time((\s*today)?))))|(your|the|this)\s*day|(what's\s*going\s*on\s*in\s*(your\s*day|today|before\s*you\s*came)|what's\s*shakin('|g)((\s*today)?))/i,
 			responses: function(name) {
 				const replys = (function() {
 					if (settings.personalities.includes("human_canexperience")) {
