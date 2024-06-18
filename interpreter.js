@@ -1,15 +1,25 @@
 // JavaPlus: A new superset for JavaScript. This is unfinished, though.
 function superset(code) {
-	const array = /((const|let|var)\s+[a-zA-Z$_][a-zA-Z$_0-9]*\s*\=)?((#|l\-|f\-)?)(\[((('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/),\s*)*(('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/)\])|\[\]/g
-	let c = code.replace(array, function(match, _, _2, spec) {
+	function special(spec, matchnospec) {
 		if (spec === "#") {
-			return match + ".length"
-		} else if (spec === "l-") {
-			return match + `[${"(" + match + ")"}.length - 1]`
-		} else if (spec === "f-") {
-			return match + `[0]`
+			return matchnospec + ".length"
+		} else if (spec === "l") {
+			return matchnospec + `[${"(" + mattCH + ")"}.length - 1]`
+		} else if (spec === "f") {
+			return matchnospec + `[0]`
 		}
-		return match
+	}
+	const array = /((#|l|f)?)(\[((('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/),\s*)*(('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/)\])|\[\]|\[(('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/)\]/g
+	let c = code.replace(array, function(match, spec) {
+		const matchnospec = match.replace(/^(#|l|f)/g, "")
+		return special(spec, matchnospec) || match
+	})
+	const variable = /((#|l|f)?)(?<!")(?<!')(?<!`)([a-zA-Z$_][a-zA-Z$_0-9]*)([^"'`]?)/g
+	c = code.replace(variable, function(match, spec, _, _, _, _, varname) {
+		const a = "const,let,var,void,function,try,catch,finally,class,extends,default,case,switch,export,import".split(",")
+		if (!a.includes(varname)) {
+			return special(spec, varname) || match
+		}
 	})
 	return c
 }
