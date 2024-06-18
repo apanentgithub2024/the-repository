@@ -18,7 +18,7 @@ const setup = (function(settings = {
 						return ["Hi", "Hello", "Hey"]
 					}
 				})()
-				return ra(hellos) + (Math.random() < 0.5 ? "," : "") + (settings.personalities.includes("western") ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!")
+				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (settings.personalities.includes("western") ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!")
 			},
 			id: "greet0"
 		},
@@ -37,7 +37,7 @@ const setup = (function(settings = {
 							const a = "can't experience, nor " + ra(["can I feel", "have fun", "hang out"])
 							return ["I " + ra(["unfortunately ", ""]) + a, ra(["Unfortanetly, ", ""]) + "I " + a]
 						} else {
-							return ["Since " + ra(["I am an AI", "I am just a single JavaScript file", "I am just AI", "I don't feel", "I wasn't made for traveling", "I wasn't made for exploring", "I am just a program"]) + "I " + ra(["unfortunately ", ""]) + "can't " + ra(["experience the real life world", "travel to any place", "travel anywhere", "experience real life", "really travel anywhere", "go on an adventure"])]
+							return ["Since " + ra(["I am an AI", "I am just a single JavaScript file", "I am just AI", "I don't feel", "I wasn't made for traveling", "I wasn't made for exploring", "I am just a program"]) + ra(["", ","]) + " I " + ra(["unfortunately ", ""]) + "can't " + ra(["experience the real life world", "travel to any place", "travel anywhere", "experience real life", "really travel anywhere", "go on an adventure"])]
 						}
 					}
 				})()
@@ -46,7 +46,6 @@ const setup = (function(settings = {
 			id: "how_are_you"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
-
 	return {
 		respond: function(response) {
 			let ai = ""
