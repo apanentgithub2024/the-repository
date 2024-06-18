@@ -77,7 +77,7 @@ const setup = (function(settings = {
 			}
 			let greeted = false
 			regexes.forEach(function(item) {
-				const a = item.responses(information.username).replace(/(,| )(\.|\!)/g, "$1").replace(/  /g, " ")
+				const a = item.responses(information.username).replace(/(,| )(\.|\!)/g, "$2").replace(/,\./g, ".").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (greeted === false) {
