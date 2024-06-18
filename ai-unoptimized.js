@@ -69,13 +69,14 @@ const setup = (function(settings = {
 				})
 			}
 			regexes.forEach(function(item) {
+				const a = item.responses(information.username).replace(/,(\.|\!)/g, "$1").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (!/hello|hi|hey there/i.test(ai)) {
-							ai += item.responses(information.username).replace(/,(\.|\!)/g, "$1")
+							ai += a
 						}
 					} else {
-						ai += item.responses(information.username).replace(/,(\.|\!)/g, "$1")
+						ai += a
 					}
 				}
 			})
