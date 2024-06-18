@@ -63,7 +63,7 @@ const setup = (function(settings = {
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
 	const information = {
-		username: ""
+		username: undefined
 	}
 	return {
 		respond: function(response) {
@@ -77,7 +77,7 @@ const setup = (function(settings = {
 			}
 			let greeted = false
 			regexes.forEach(function(item) {
-				const a = item.responses(information.username).replace(/(,| )(\.|\!)/g, "$2").replace(/,\./g, ".").replace(/  /g, " ")
+				const a = item.responses(information.username).replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (greeted === false) {
