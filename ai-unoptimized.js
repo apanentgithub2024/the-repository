@@ -18,7 +18,7 @@ const setup = (function(settings = {
 						return ["Hi", "Hello", "Hey"]
 					}
 				})()
-				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (settings.personalities.includes("western") ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!")
+				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (settings.personalities.includes("western") ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!") + " "
 			},
 			id: "greet0"
 		},
@@ -41,17 +41,42 @@ const setup = (function(settings = {
 						}
 					}
 				})()
-				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (Math.random() < 0.75 && !!name ? (", " + (settings.personalities.includes("western") ? ra(["partner", "mate"]) : name)) : "") + ra(["!", "."]))
+				return ra(replys) + (Math.random() < 0.5 ? ra(["!", "."]) : (Math.random() < 0.75 && !!name ? (", " + (settings.personalities.includes("western") ? ra(["partner", "mate"]) : name)) : "") + ra(["!", "."])) + " "
 			},
 			id: "how_are_you"
+		},
+		{
+			regex: /my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/g,
+			responses: function(name) {
+				const r = regexes[0].responses(name)
+				const lowercase = r[0].toLowerCase() + r.slice(1)
+				return Math.random() < 0.5 ? ra(["Well, ", "Well "]) + lowercase : r
+			},
+			id: "recognize_name"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
+	const information = {
+		username: ""
+	}
 	return {
 		respond: function(response) {
 			let ai = ""
+			// detect name sentences
+			const canName = !settings.personalities.some(i => i.id === "recognize_name" && i.type === "exc_response_id")
+			if (canName) {
+				response.replace(/my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/g, function(_, name) {
+					information.username = name
+				})
+			}
 			regexes.forEach(function(item) {
 				if (item.regex.test(response)) {
-					ai += item.responses().replace(/,(\.|\!)/g, "$1") + " "
+					if (item.id.startsWith("greet")) {
+						if (!/hello|hi|hey there/i.test(ai)) {
+							ai += item.responses(information.username).replace(/,(\.|\!)/g, "$1")
+						}
+					} else {
+						ai += item.responses(information.username).replace(/,(\.|\!)/g, "$1")
+					}
 				}
 			})
 			ai = ai.trim()
