@@ -20,6 +20,7 @@ function superset(code) {
 		if (!a.includes(varname)) {
 			return special(spec, varname) || match
 		}
+		return match
 	})
 	return c
 }
