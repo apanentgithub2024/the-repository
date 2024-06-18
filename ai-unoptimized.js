@@ -55,7 +55,7 @@ const setup = (function(settings = {
 			id: "recognize_name"
 		},
 		{
-			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you/,
+			regex: /what's\s*your\s*name|what\s*is\s*your\s*name|how\s*(should|would)\s*i\s*address\s*you|what\s*should\s*i\s*call\s*you/i,
 			responses: function(name) {
 				return ra(["My name's ", "My name is ", "Well, my name is ", "Well my name is ", "Well, my name's ", "Well my name's "]) + settings.name + ra(["!", ".", ", " + (settings.personalities.includes("western") ? ra(["mate", "partner", name]) : name) + ra(["!", "."])])
 			},
