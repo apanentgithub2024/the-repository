@@ -52,7 +52,7 @@ const setup = (function(settings = {
 			let ai = ""
 			regexes.forEach(function(item) {
 				if (item.regex.test(response)) {
-					ai += item.response() + " "
+					ai += item.responses() + " "
 				}
 			})
 			ai = ai.trim()
