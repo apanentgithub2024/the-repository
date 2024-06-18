@@ -46,7 +46,7 @@ const setup = (function(settings = {
 			id: "how_are_you"
 		},
 		{
-			regex: /my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/g,
+			regex: /my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/i,
 			responses: function(name) {
 				const r = regexes[0].responses(name)
 				const lowercase = r[0].toLowerCase() + r.slice(1)
@@ -64,16 +64,18 @@ const setup = (function(settings = {
 			// detect name sentences
 			const canName = !settings.personalities.some(i => i.id === "recognize_name" && i.type === "exc_response_id")
 			if (canName) {
-				response.replace(/my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/g, function(_, name) {
+				response.replace(/my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)|my\s*own\s*name\s*is\s*(\w+)/i, function(_, name) {
 					information.username = name
 				})
 			}
+			let greeted = false
 			regexes.forEach(function(item) {
 				const a = item.responses(information.username).replace(/,(\.|\!)/g, "$1").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
-						if (!/hello|hi|hey there/i.test(ai)) {
+						if (greeted === false) {
 							ai += a
+							greeted = true
 						}
 					} else {
 						ai += a
