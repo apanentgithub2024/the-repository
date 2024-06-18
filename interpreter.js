@@ -1,6 +1,6 @@
 // JavaPlus: A new superset for JavaScript. This is unfinished, though.
 function superset(code) {
-	const array = /(#|l\-|f\-)?(\[((('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/),\s*)*(('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/)\]|(?=[a-zA-Z$]([a-zA-Z0-9$]*)?!(const|let|switch|var|function|try|catch|default))|\[\])/g
+	const array = /(#|l\-|f\-)?(\[((('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/),\s*)*(('[^']*')|("[^"]*")|(`[^`]*`)|\d+([eE]\d+?)(\.\d+?)|null|undefined|\/\*([^\*]*)\*\/)\]|((?!let)(?!const)(?!var)(?!void)(?!function)[a-zA-Z$]([a-zA-Z0-9$]*)|\[\])/g
 	let c = code.replace(array, function(match, spec) {
 		if (spec === "#") {
 			return match + ".length"
