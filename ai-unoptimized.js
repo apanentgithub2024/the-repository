@@ -102,7 +102,7 @@ const setup = (function(settings = {
 					currentlyasking = "confused"
 					return westernp ? ra(["What're you talkin' about exactly?", "What were you talkin' about/asking previously?", "Why were you tellin' me this?"]).replace(/\?/g, (!!name ? ", " + name : Math.random() < 0.5 ? "" : ", " + ra(["mate", "partner"])) + "?") : ra(["What are you talking about exactly?", "What were you talking about/asking previously?", "Why were you telling me this?"])
 				}
-			}
+			},
 			id: "i_was_curious:are_you_an_ai"
 		}
 	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
