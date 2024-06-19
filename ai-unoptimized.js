@@ -114,7 +114,8 @@ const setup = (function(settings = {
 					return a + "help" + (a.includes("for") ? "ing " : " ") + (ra(["others ", "people ", "users "]) + ra(["like you", "including you", ""])).trim() + ra([".", "!"]) + (!lazyp ? "I was also " + ra(["made to ", "created to ", "built to "]) + "chat with " + (ra(["others ", "people ", "users "]) + ra(["including you", "like you", ""])).trim() + ra([".", "!"]) : "")
 				})()
 				return a + (a !== "Of course" ? ", " : " ") + ra(["I can", "I can explain myself", "I can explain my purpose"]) + ra([".", "!"]) + " " + b
-			}
+			},
+			id: "can_you_tell_me_about_yourself"
 		}
 	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
 	const information = {
