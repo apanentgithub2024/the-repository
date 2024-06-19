@@ -5,6 +5,7 @@ const setup = (function(settings = {
 	personalities: [],
 	name: "UnnamedAI"
 }) {
+	let currentlyasking = ""
 	const westernp = settings.personalities.includes("westernp")
 	const human_canexperiencep = settings.personalities.includes("human_canexperience")
 	const lazyp = settings.personalities.includes("lazy")
@@ -86,7 +87,7 @@ const setup = (function(settings = {
 			},
 			id: "let_me_know_when_you_need_assistance"
 		}
-	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
+	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
 	const information = {
 		username: undefined
 	}
@@ -94,7 +95,8 @@ const setup = (function(settings = {
 		respond: function(response) {
 			let ai = ""
 			// detect name sentences
-			const canName = !settings.personalities.some(i => i.id === "recognize_name" && i.type === "exc_response_id")
+			const canName = !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === "recognize_name" && i.type === "exc_response_id")
+			console.log(canName)
 			if (canName) {
 				response.replace(/my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i, function(_, name) {
 					information.username = name
