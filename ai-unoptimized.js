@@ -138,7 +138,7 @@ const setup = (function(settings = {
 			}
 			let greeted = false
 			for (const item of regexes) {
-				const a = item.responses(information.username, response.match(item.regex)).replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
+				const a = item.responses(information.username, response.match(item.regex)[0]).replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (greeted === false) {
