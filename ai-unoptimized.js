@@ -15,15 +15,9 @@ const setup = (function(settings = {
 	const regexes = [
 		{
 			regex: /((hi(ya?)|hello|hey|howdy)(\s*))(there?)((\,)?)(\s*)(my(\s*)?)(((pal|bud(dy?)|man|friend|woman|child|([a-z]*))|\?)?)|(g'day|(good|great|marvellous|awesome)(\s*)day((,\s*)?))|(what's(\s*)shakin('|g)(\s*)my(\s*)(pal|bud(dy?)|man|friend|woman|child|bacon))|((pal|bud(dy?)|man|friend|woman|child|hey|hi|hello|([a-z]*))(,(\s*))?)(what's\s*up|what\s*is\s*up)|(hello|hi|howdy|g'day|hey)(((,?)(\s*)there)?)/i,
-			responses: function(name) {
-				const hellos = (function() {
-					if (westernp) {
-						return ["Howdy", "G'day"]
-					} else {
-						return ["Hi", "Hello", "Hey"]
-					}
-				})()
-				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (westernp ? ra(["mate", "partner"]) : (Math.random() < 0.75 && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!") + " "
+			responses: function(name, should) {
+				const hellos = westernp ? ["Howdy", "G'day"] : ["Hi", "Hello", "Hey"]
+				return ra(hellos) + (Math.random() < 0.5 ? ", " : " ") + (westernp ? ra(["mate", "partner"]) : ((Math.random() < 0.75 || should) && !!name ? " " + name : "")) + (Math.random() < 0.5 ? "." : "!") + " "
 			},
 			id: "greet0"
 		},
@@ -53,7 +47,7 @@ const setup = (function(settings = {
 		{
 			regex: /my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i,
 			responses: function(name) {
-				const r = regexes[0].responses(name)
+				const r = regexes[0].responses(name, true)
 				const lowercase = r[0].toLowerCase() + r.slice(1)
 				return Math.random() < 0.5 ? ra(["Well, ", "Well "]) + lowercase : r
 			},
