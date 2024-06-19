@@ -9,7 +9,7 @@
 		if (event.key === "Enter") {
 			const val = i.value
 			const msg = document.createElement("div")
-			msg.textContent = "User: " val
+			msg.textContent = "User: " + val
 			chat.appendChild(msg)
 			const result = ai.respond(val)
 			const msg2 = document.createElement("div")
