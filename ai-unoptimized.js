@@ -141,12 +141,15 @@ const setup = (function(settings = {
 							greeted = true
 						}
 					} else if (item.id.includes(":")) { // User suggests they want to ask a question of some kind
-						if (ai.includes("Why") && regexes[7].regex.test(response)) {
+						const b = !regexes[9].regex.test(response)
+						if (ai.includes("Why") && regexes[7].regex.test(response) && b) {
 							ai = ai.replace(/(Now ?)I (know|see)([^\.!]*)|That('s?)([^\.!]*)|Thank(s| you) for([^\.!]*)|Oh, okay!|Okay!|(Yes|Of course|Sure|Yeah|Yup)([^\.!]*)|Thanks for showing me why you asked!/g, "")
 							ai += (ra(["Okay, ", "Okay. ", ""]) + ra(["I'm waiting for an answer", "I am waiting for an answer", "I am waiting for your answer"]) + westernp ? (ra([", " + ra(["mate", "partner"]), "."])) : ".").replace(/ng/g, westernp ? "n'" : "ng")
 							currentlyasking = "botornot"
 						} else {
-							ai += a
+							if (b) {
+								ai += a
+							}
 						}
 					} else {
 						ai += a
