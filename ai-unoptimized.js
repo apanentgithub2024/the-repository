@@ -93,7 +93,7 @@ const setup = (function(settings = {
 			id: "are_you_an_ai"
 		},
 		{
-			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one|wanted\s*to\s*ask|i\s*([^\.!]+)/i,
+			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one|wanted\s*to\s*ask|(i\s*just\s*wanted\s*to\s*let\s*you\s*know\s*because\s*|i\s*just\s*wanted\s*to\s*ask\s*because\s*)([^\.!]+)/i,
 			responses: function(name) {
 				if (currentlyasking === "botornot") {
 					currentlyasking = ""
@@ -143,7 +143,7 @@ const setup = (function(settings = {
 					} else if (item.id.includes(":")) { // User suggests they want to ask a question of some kind
 						const b = !regexes[9].regex.test(response)
 						if (ai.includes("Why") && regexes[7].regex.test(response) && b) {
-							ai = ai.replace(/(Now ?)I (know|see)([^\.!]*)|That('s?)([^\.!]*)|Thank(s| you) for([^\.!]*)|Oh, okay!|Okay!|(Yes|Of course|Sure|Yeah|Yup)([^\.!]*)|Thanks for showing me why you asked!/g, "")
+							ai = ai.replace(/(Now ?)I (know|see)([^\.!]*)(\.|!)|That('s?)([^\.!]*)(\.|!)|Thank(s| you) for([^\.!]*)(\.|!)|Oh, okay!|Okay!|(Yes|Of course|Sure|Yeah|Yup)([^\.!]*)(\.|!)|Thanks for showing me why you asked!|What were you([^?]*)?/g, "")
 							ai += (ra(["Okay, ", "Okay. ", ""]) + ra(["I'm waiting for an answer", "I am waiting for an answer", "I am waiting for your answer"]) + westernp ? (ra([", " + ra(["mate", "partner"]), "."])) : ".").replace(/ng/g, westernp ? "n'" : "ng")
 							currentlyasking = "botornot"
 						} else {
