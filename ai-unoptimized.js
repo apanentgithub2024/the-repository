@@ -77,9 +77,33 @@ const setup = (function(settings = {
 		{
 			regex: /((let\s*me|lemme)\s*know|(call|warn)\s*me|shout\s*for\s*(assistance|help))\s*(if|when)\s*you\s*((really\s*)?)(need|want|seek((\s*for)?))\s*(assistance|help)|if\s*you\s*((ever\s*)?)((do\s*)?)(want|need|have\s*to\s*call\s*for)\s*(help|assistance)/i,
 			responses: function(name) {
-				return ra(["Okay", "I know when to let you know for " + ra(["help", "assistance"]), "Got it", "I know when I need you", "I know when to ask for help", "Alright", "Thanks for knowing to help me when I need you" + " " + ra(["for anything", "for something" + ra([" important", " problematic", ""])])]) + (!!name ? ra([", " + (westernp ? ra(["partner", "mate"]) : name), ""]) : "") + ra([".", "!"])
+				return lazyp ? ra(["Okay", "I know when to let you know", "I know when to seek for help", "Got it", "I know when to call your name"]) + ra([".", "!"]) : ra(["Okay", "I know when to let you know for " + ra(["help", "assistance"]), "Got it", "I know when I need you", "I know when to ask for help", "Alright", "Thanks for knowing to help me when I need you" + " " + ra(["for anything", "for something" + ra([" important", " problematic", ""])]), "I know when I need you now that you told me"]) + (!!name ? ra([", " + (westernp ? ra(["partner", "mate"]) : name), ""]) : "") + ra([".", "!"])
 			},
 			id: "let_me_know_when_you_need_assistance"
+		},
+		{
+			regex: /(are(n't?))\s*you\s*((really\s*)*)((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot)/i,
+			responses: function() {
+				const to_ask_or_not_to_ask = Math.random() < 0.5 ? " " + (lazyp ? ra(["Why did you ask?", "Why?"]) : ra(["Why did you ask whether I was a bot or not?", "Why did you ask whether I was a robot or not?", "Why did you ask that question?", "Why did you ask the question?"])) : ""
+				if (to_ask_or_not_to_ask.length > 0) {
+					currentlyasking = "botornot"
+				}
+				return lazyp ? ra(["Sure", "Yes", "Yeah", "Yup", "Of course"]) + ra([".", "!"]) : ra(["Of course ", "Yes, ", "Yeah, ", "Yup, ", "Sure, ", "", "", ""]) + ra(["I am an AI", "I am a bot", "I am a robot", "I am a responding bot", "I am a responding robot"]) + ra([".", "!"]) + to_ask_or_not_to_ask
+			},
+			id: "are_you_an_ai"
+		},
+		{
+			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*(was\s*just\s*asking|just\s*wanted\s*to\s*ask|wanted\s*to\s*ask\s*the\s*question|(((just\s*)?)((really\s*)*)wanted\s*to\s*ask\s*|was\s*eager\s*to\s*ask\s*|was\s*just\s*wondering\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one)|wanted\s*to\s*ask/i,
+			responses: function(name) {
+				if (currentlyasking === "botornot") {
+					currentlyasking = ""
+					return ra(["Oh, okay!", "Okay!", "I know why now!", "I see why now!", "That makes sense!", "That's a good reason!", "Thanks for explaining why!", "Thanks for showing me why!", "Thanks for showing me why you asked!", "Thank you for showing me why you asked!", "Thank you for showing me why!"])
+				} else {
+					currentlyasking = "confused"
+					return westernp ? ra(["What're you talkin' about exactly?", "What were you talkin' about/asking previously?", "Why were you tellin' me this?"]).replace(/\?/g, (!!name ? ", " + name : Math.random() < 0.5 ? "" : ", " + ra(["mate", "partner"])) + "?") : ra(["What are you talking about exactly?", "What were you talking about/asking previously?", "Why were you telling me this?"])
+				}
+			}
+			id: "i_was_curious:are_you_an_ai"
 		}
 	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
 	const information = {
@@ -103,6 +127,14 @@ const setup = (function(settings = {
 						if (greeted === false) {
 							ai += a
 							greeted = true
+						}
+					} else if (item.id.includes(":")) { // User suggests they want to ask a question of some kind
+						if (ai.includes("Why") && regexes[7].regex.test(response)) {
+							ai = ai.replace(/(Now ?)I (know|see)([^\.!]*)|That('s?)([^\.!]*)|Thanks for([^\.!]*)|Oh, okay!|Okay!|(Yes|Of course|Sure|Yeah|Yup)([^\.!]*)/g, "")
+							ai += (ra(["Okay, ", "Okay. ", ""]) + ra(["I'm waiting for an answer", "I am waiting for an answer", "I am waiting for your answer"]) + westernp ? (ra([", " + ra(["mate", "partner"]), "."])) : ".").replace(/ng/g, westernp ? "n'" : "ng")
+							currentlyasking = "botornot"
+						} else {
+							ai += a
 						}
 					} else {
 						ai += a
