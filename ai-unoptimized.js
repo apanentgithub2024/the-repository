@@ -93,7 +93,7 @@ const setup = (function(settings = {
 			id: "are_you_an_ai"
 		},
 		{
-			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one|wanted\s*to\s*ask/i,
+			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one|wanted\s*to\s*ask|i\s*([^\.!]+)/i,
 			responses: function(name) {
 				if (currentlyasking === "botornot") {
 					currentlyasking = ""
@@ -104,6 +104,17 @@ const setup = (function(settings = {
 				}
 			},
 			id: "i_was_curious:are_you_an_ai"
+		},
+		{
+			regex: /can\s*you\s*(tell|show)\s*((us\s*|me\s*)?)((all\s*)?)about\s*yourself/i,
+			responses: function() {
+				const a = ra(["Sure", "Yes", "Yep", "Yeah", "Of course"])
+				const b = (function() {
+					const a = ra(["I was made to ", "I was created to ", "I was built to ", "I was built for "])
+					return a + "help" + (a.includes("for") ? "ing " : " ") + (ra(["others ", "people ", "users "]) + ra(["like you", "including you", ""])).trim() + ra([".", "!"]) + (!lazyp ? "I was also " + ra(["made to ", "created to ", "built to "]) + "chat with " + (ra(["others ", "people ", "users "]) + ra(["including you", "like you", ""])).trim() + ra([".", "!"]) : "")
+				})()
+				return a + (a !== "Of course" ? ", " : " ") + ra(["I can", "I can explain myself", "I can explain my purpose"]) + ra([".", "!"]) + " " + b
+			}
 		}
 	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
 	const information = {
