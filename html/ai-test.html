@@ -11,9 +11,11 @@
 			const msg = document.createElement("div")
 			msg.textContent = "User: " + val
 			chat.appendChild(msg)
+			const ms1 = Date.now()
 			const result = ai.respond(val)
+			const ms2 = Date.now()
 			const msg2 = document.createElement("div")
-			msg2.textContent = ai.model + ": " + result
+			msg2.textContent = ai.model + ": " + result + "\nTotal respond time: " + (ms2 - ms1) + "ms"
 			chat.appendChild(msg2)
 			i.value = ""
 		}
