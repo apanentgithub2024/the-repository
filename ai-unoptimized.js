@@ -40,7 +40,7 @@ const setup = (function(settings = {
 					} else {
 						if (lazyp) {
 							const a = "can't experience, nor " + ra(["can I feel", "have fun", "hang out"])
-							return ["I " + ra(["unfortunately ", ""]) + a, ra(["Unfortanetly, ", ""]) + "I " + a]
+							return ["I " + ra(["unfortunately ", ""]) + a, ra(["Unfortunately, ", ""]) + "I " + a]
 						} else {
 							return ["Since " + ra(["I am an AI", "I am just a single JavaScript file", "I am just AI", "I don't feel", "I wasn't made for traveling", "I wasn't made for exploring", "I am just a program"]) + ra(["", ","]) + " I " + ra(["unfortunately ", ""]) + "can't " + ra(["experience the real life world", "travel to any place", "travel anywhere", "experience real life", "really travel anywhere", "go on an adventure"])]
 						}
@@ -96,10 +96,9 @@ const setup = (function(settings = {
 			let ai = ""
 			// detect name sentences
 			const canName = !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === "recognize_name" && i.type === "exc_response_id")
-			console.log(canName)
 			if (canName) {
-				response.replace(/my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i, function(_, name) {
-					information.username = name
+				response.replace(/my\s*own\s*name\s*is\s*(\w+)|my\s*name\s*is\s*(\w+)|my\s*name's\s*(\w+)/i, function(_, ...a) {
+					information.username = a.find(item => !!item)
 				})
 			}
 			let greeted = false
