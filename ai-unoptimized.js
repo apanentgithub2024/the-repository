@@ -75,9 +75,16 @@ const setup = (function(settings = {
 		{
 			regex: /do\s*you\s*need\s*(assistance|help)|how\s*(can|should)\s*i\s*(assist|help)\s*you|can\s*i\s*(assist|help)\s*you|do\s*you\s*(want|need)\s*(assistance|help)|do\s*you\s*seek\s*((for\s*)?)(assistance|help)/i,
 			responses: function() {
-				return ra(["No thank you", "No thanks", "I don't need assistance", "I don't need help", "No, I don't need assistance", "No, I don't need help"]) + ra([".", ", but " + ra(["thank you for asking!", "thanks for asking!", "thank you for asking me!", "thanks for asking me!"])])
+				return ra(["I don't need assistance", "I don't need help", "No, I don't need assistance", "No, I don't need help"]) + ra([".", ", but " + ra(["thank you for asking!", "thanks for asking!", "thank you for asking me!", "thanks for asking me!"])])
 			},
 			id: "do_you_need_assistance"
+		},
+		{
+			regex: /((let\s*me|lemme)\s*know|(call|warn)\s*me|shout\s*for\s*(assistance|help))\s*(if|when)\s*you\s*((really\s*)?)(need|want|seek((\s*for)?))\s*(assistance|help)/i,
+			responses: function(name) {
+				return ra(["Okay", "I know when to let you know for " + ra(["help", "assistance"]), "Got it", "I know when I need you", "I know when to ask for help", "Alright", "Thanks for knowing to help me when I need you" + ra(["for anything", "for something" + ra([" important", " problematic", ""])])]) + ra([", " + (westernp ? ra(["partner", "mate"]) : name), ""]) + ra([".", "!"])
+			},
+			id: "let_me_know_when_you_need_assistance"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
 	const information = {
