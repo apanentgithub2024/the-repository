@@ -93,7 +93,7 @@ const setup = (function(settings = {
 			id: "are_you_an_ai"
 		},
 		{
-			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one)|wanted\s*to\s*ask/i,
+			regex: /i\s*was\s*((just\s*|very\s*)?)(curious|wondering)|i\s*((really\s*)*)(was\s*just\s*asking\s*|just\s*wanted\s*to\s*ask\s*|wanted\s*to\s*ask\s*|wanted\s*to\s*see\s*)if\s*you\s*were\s*(((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot))|one|wanted\s*to\s*ask/i,
 			responses: function(name) {
 				if (currentlyasking === "botornot") {
 					currentlyasking = ""
