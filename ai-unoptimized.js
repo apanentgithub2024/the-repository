@@ -82,7 +82,7 @@ const setup = (function(settings = {
 		{
 			regex: /((let\s*me|lemme)\s*know|(call|warn)\s*me|shout\s*for\s*(assistance|help))\s*(if|when)\s*you\s*((really\s*)?)(need|want|seek((\s*for)?))\s*(assistance|help)|if\s*you\s*((ever\s*)?)((do\s*)?)(want|need|have\s*to\s*call\s*for)\s*(help|assistance)/i,
 			responses: function(name) {
-				return ra(["Okay", "I know when to let you know for " + ra(["help", "assistance"]), "Got it", "I know when I need you", "I know when to ask for help", "Alright", "Thanks for knowing to help me when I need you" + ra(["for anything", "for something" + ra([" important", " problematic", ""])])]) + ra([", " + (westernp ? ra(["partner", "mate"]) : name), ""]) + ra([".", "!"])
+				return ra(["Okay", "I know when to let you know for " + ra(["help", "assistance"]), "Got it", "I know when I need you", "I know when to ask for help", "Alright", "Thanks for knowing to help me when I need you" + " " + ra(["for anything", "for something" + ra([" important", " problematic", ""])])]) + ra([", " + (westernp ? ra(["partner", "mate"]) : name), ""]) + ra([".", "!"])
 			},
 			id: "let_me_know_when_you_need_assistance"
 		}
