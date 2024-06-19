@@ -111,7 +111,7 @@ const setup = (function(settings = {
 				const a = ra(["Sure", "Yes", "Yep", "Yeah", "Of course"])
 				const b = (function() {
 					const a = ra(["I was made to ", "I was created to ", "I was built to ", "I was built for "])
-					return a + "help" + (a.includes("for") ? "ing " : " ") + (ra(["others ", "people ", "users "]) + ra(["like you", "including you", ""])).trim() + ra([".", "!"]) + (!lazyp ? "I was also " + ra(["made to ", "created to ", "built to "]) + "chat with " + (ra(["others ", "people ", "users "]) + ra(["including you", "like you", ""])).trim() + ra([".", "!"]) : "")
+					return a + "help" + (a.includes("for") ? "ing " : " ") + (ra(["others ", "people ", "users "]) + ra(["like you", "including you", ""])).trim() + ra([". ", "! "]) + (!lazyp ? "I was also " + ra(["made to ", "created to ", "built to "]) + "chat with " + (ra(["others ", "people ", "users "]) + ra(["including you", "like you", ""])).trim() + ra([".", "!"]) : "")
 				})()
 				return a + (a !== "Of course" ? ", " : " ") + ra(["I can", "I can explain myself", "I can explain my purpose"]) + ra([".", "!"]) + " " + b
 			},
