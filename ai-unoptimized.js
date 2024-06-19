@@ -67,10 +67,17 @@ const setup = (function(settings = {
 		},
 		{
 			regex: /(you're|you\s*are)\s*((actually\s*)?)(((very|so|super)\s*)*)(smart|awesome|helpful|kind|sweet|nice|enjoyable|unique|fun(ny?)|cool|(respect|trust|appreciat(e?))(ful|worthy|able))/i,
-			responses: function(name) {
+			responses: function() {
 				return lazyp ? ra(["Thanks!", "Thank you!", "Thank you so much!", "Thank you very much!"]) : (westernp ? ra(["Thanks for the darn ", "Thank you for the darn ", "Thank you for the pretty darn "]) + ra(["good ", "nice ", "appreciable "]) + ra(["compliment", "honor"]) + ra([".", "!", ", " + ra(["mate", "partner"]) + ra([".", "!"])]) : ra(["Thank you!", "Thank you very much!", "Thanks!", "I appreciate the compliment!", "I like the compliment!", "I appreciate your kindness!", "I like your compliment!", "I like your compliment very much!", "Thank you so much!", "I like your compliment so much!", "I'm glad you " + ra(["honor ", "like ", "appreciate "]) + "me!"]) + " " + ra(["Even though I'm not perfect, ", "Even though I have some issues to have fixed, ", "I may not be perfect, but "]) + ra(["I can help you anytime you want!", "I can help you enjoy your day more!", "I can try to support you along the way!", "I can try to improve the more I last!", "I improve almost every day!"])) + " "
 			},
 			id: "compliment0"
+		},
+		{
+			regex: /do\s*you\s*need\s*(assistance|help)|how\s*(can|should)\s*i\s*(assist|help)\s*you|can\s*i\s*(assist|help)\s*you|do\s*you\s*(want|need)\s*(assistance|help)|do\s*you\s*seek\s*((for\s*)?)(assistance|help)/i,
+			responses: function() {
+				return ra(["No thank you", "No thanks", "I don't need assistance", "I don't need help", "No, I don't need assistance", "No, I don't need help"]) + ra([".", ", but " + ra(["thank you for asking!", "thanks for asking!", "thank you for asking me!", "thanks for asking me!"])])
+			},
+			id: "do_you_need_assistance"
 		}
 	].filter(item => !settings.personalities.some(i => i.id === item.id && i.type === "exc_response_id"))
 	const information = {
