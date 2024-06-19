@@ -143,7 +143,7 @@ const setup = (function(settings = {
 					} else if (item.id.includes(":")) { // User suggests they want to ask a question of some kind
 						const b = !regexes[9].regex.test(response)
 						const c = /(Now ?)I (know|see)([^\.!]*)(\.|!)|That('s?)([^\.!]*)(\.|!)|Thank(s| you) for([^\.!]*)(\.|!)|Oh, okay!|Okay!|(Yes|Of course|Sure|Yeah|Yup)([^\.!]*)(\.|!)|Thanks for showing me why you asked!|What were you([^?]*)?/
-						if (c.test(ai) && /(i\s*((just\s*)?)wanted\s*to\s*ask\s*)if\s*you\s*were\s*((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot)/i.test(response) && b) {
+						if (c.test(ai) && /(i\s*((just\s*)?)wanted\s*to\s*ask\s*((you\s*)?))if\s*you\s*were\s*((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot)/i.test(response) && b) {
 							ai = ai.replace(new RegExp(c.source, "g"), "")
 							ai += (ra(["Okay, ", "Okay. ", ""]) + ra(["I'm waiting for you to ask me in a real question", "I am waiting for a real question", "I am waiting for your real question"]) + westernp ? (ra([", " + ra(["mate", "partner"]), "."])) : ".").replace(/ng/g, westernp ? "n'" : "ng")
 							currentlyasking = "botornot"
