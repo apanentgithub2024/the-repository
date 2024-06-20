@@ -7,7 +7,7 @@ const run = function(text, c = true) {
 	function lexer(c) {
 		return c.match(tokensRe)
 	}
-	console.log(lexer(c))
+	console.log(lexer(text))
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
 		if (/[^ \r\t\n]/.test(check)) {
