@@ -95,10 +95,10 @@ const run = function(text, c = true) {
 					case "st":
 						f += token.q + token.v + token.q
 						break
-					case "dec":
+					case "int":
 						f += token
 						break
-					case "int":
+					case "dec":
 						f += token
 						break
 					case "eq":
