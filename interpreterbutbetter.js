@@ -1,5 +1,6 @@
 // This shows you don't need ANTLR to make a programming language
 const run = function(text, c = true) {
+	code
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	let tokens = new RegExp(ret.source + "|" + keys.source, "gs")
