@@ -28,7 +28,7 @@ const run = function(text, c = true) {
 						})
 					} else if (/^\d+(\.?)/.test(token)) {
 						f.push({
-							type: token.includes(".") ? "dec" : "int"
+							type: token.includes(".") ? "dec" : "int",
 							v: token
 						})
 					} else if (/(=|\^)=/.test(token)) {
