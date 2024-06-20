@@ -2,13 +2,13 @@
 const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
-	let tokens = new RegExp(ret.source + "|" + keys.source, "gs")
+	const tokensRe = new RegExp(ret.source + "|" + keys.source, "gs")
 	// I did it from seperate regexes, because it's an easier way to add syntax
 	function lexer(c) {
 		return c.match(tokens)
 	}
 	function parser(original, tok) {
-		const check = original.replace(tokens, "")
+		const check = original.replace(tokensRe, "")
 		if (/[^ \r\t\n]/.test(check)) {
 			throw "ParserError: Invalid token has been found: " + check.match(/[^ \r\t\n]+/g)[0]
 		}
