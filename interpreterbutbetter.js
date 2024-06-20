@@ -48,7 +48,6 @@ const run = function(text, c = true) {
 							type: "ign"
 						})
 					}
-					console.log(f[i])
 				} else {
 					throw "ParseIntoFormulaError: Expected a formula token: " + token
 				}
