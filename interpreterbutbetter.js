@@ -3,11 +3,9 @@ const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
-	// I did it from seperate regexes, because it's an easier way to add syntax
 	function lexer(c) {
 		return c.match(tokensRe)
 	}
-	console.log(lexer(text))
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
 		if (/[^ \r\t\n]/.test(check)) {
@@ -20,13 +18,13 @@ const run = function(text, c = true) {
 			let f = []
 			for (const token of group) {
 				if (ret.test(token)) {
-					if (/^("|')(.*)/s.test(token)) {
+					if (/("|')(.*)/s.test(token)) {
 						f.push({
 							type: "st",
 							v: token.slice(1, -1),
 							q: token[0]
 						})
-					} else if (/^\d+(\.?)/.test(token)) {
+					} else if (/\d+(\.?)/.test(token)) {
 						f.push({
 							type: token.includes(".") ? "dec" : "int",
 							v: token
@@ -115,7 +113,6 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
-		console.log(result)
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
