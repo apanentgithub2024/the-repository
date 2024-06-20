@@ -1,5 +1,6 @@
 const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
+	const rete = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
@@ -64,7 +65,7 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				state = "for"
-			} else if (state == "for" && ret.test(token)) {
+			} else if (state == "for" && rete.test(token)) {
 				formula.push(token)
 				if (i + 1 === tok.length) {
 					tokens.push({
@@ -72,7 +73,7 @@ const run = function(text, c = true) {
 						f: parseIntoFormula(formula)
 					})
 				}
-			} else if (state == "for" && !ret.test(token)) {
+			} else if (state == "for" && !rete.test(token)) {
 				state = ""
 				tokens.push({
 					type: "f",
@@ -81,7 +82,6 @@ const run = function(text, c = true) {
 				formula = []
 				i--
 			}
-			console.log(i)
 			i++
 		}
 		return tokens
