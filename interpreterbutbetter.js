@@ -76,7 +76,7 @@ const run = function(text, c = true) {
 			return tokens
 		}
 	}
-	const result = parser(code, lexer(code))
+	const result = parser(text, lexer(text))
 	if (c) {
 		let code = ""
 		let t = ""
