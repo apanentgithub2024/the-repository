@@ -54,27 +54,27 @@ const run = function(text, c = true) {
 					throw "ParseIntoFormulaError: Expected a formula token: " + token
 				}
 			}
-			for (const token of tok) {
-				if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*/.test(token)) {
-					const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1] // The regex also matches the keyword. Thank Bredan we still have the "match" function.
-					tokens.push({
-						type: "dv",
-						v: varname
-					})
-					state = "for"
-				} else if (state == "for" && ret.test(token)) {
-					formula.push(token)
-				} else if (state == "for" && !ret.test(token)) {
-					state = ""
-					tokens.push({
-						type: "f",
-						f: parseIntoFormula(formula)
-					})
-					formula = []
-				}
-			}
-			return tokens
 		}
+		for (const token of tok) {
+			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*/.test(token)) {
+				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1] // The regex also matches the keyword. Thank Bredan we still have the "match" function.
+				tokens.push({
+					type: "dv",
+					v: varname
+				})
+				state = "for"
+			} else if (state == "for" && ret.test(token)) {
+				formula.push(token)
+			} else if (state == "for" && !ret.test(token)) {
+				state = ""
+				tokens.push({
+					type: "f",
+					f: parseIntoFormula(formula)
+				})
+				formula = []
+			}
+		}
+		return tokens
 	}
 	const result = parser(text, lexer(text))
 	if (c) {
