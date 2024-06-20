@@ -7,8 +7,8 @@ const run = function(text, c = true) {
 	}
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
-		if (/[^ \r\t\n]/.test(check)) {
-			throw "ParserError: Invalid token has been found: " + check.match(/[^ \r\t\n]+/g)[0]
+		if (/[^ \r\t\n;]/.test(check)) {
+			throw "ParserError: Invalid token has been found: " + check.match(/[^ \r\t\n;]+/g)[0]
 		}
 		let tokens = []
 		let state = ""
@@ -78,6 +78,7 @@ const run = function(text, c = true) {
 					f: parseIntoFormula(formula)
 				})
 				formula = []
+				i -= 1
 			}
 		}
 		return tokens
