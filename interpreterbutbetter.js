@@ -2,7 +2,7 @@
 const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
-	const tokensRe = new RegExp(ret.source + "|" + keys.source + "|=", "gs")
+	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	// I did it from seperate regexes, because it's an easier way to add syntax
 	function lexer(c) {
 		return c.match(tokensRe)
