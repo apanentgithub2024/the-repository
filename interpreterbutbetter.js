@@ -56,7 +56,8 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
-		for (const token of tok) {
+		for (let i = 0; i < tok.length; i++) {
+			const token = tok[i]
 			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
 				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1] // The regex also matches the keyword. Thank Bredan we still have the "match" function.
 				tokens.push({
@@ -66,6 +67,12 @@ const run = function(text, c = true) {
 				state = "for"
 			} else if (state == "for" && ret.test(token)) {
 				formula.push(token)
+				if (i + 1 === tok.length) {
+					tokens.push({
+						type: "f",
+						f: parseIntoFormula(formula)
+					})
+				}
 			} else if (state == "for" && !ret.test(token)) {
 				state = ""
 				tokens.push({
