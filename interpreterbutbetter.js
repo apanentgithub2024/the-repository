@@ -83,7 +83,6 @@ const run = function(text, c = true) {
 		return tokens
 	}
 	const result = parser(text, lexer(text))
-	console.log(result)
 	if (c) {
 		let code = "";
 		let t = ""
