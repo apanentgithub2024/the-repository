@@ -55,7 +55,7 @@ const run = function(text, c = true) {
 			return f
 		}
 		let i = 0
-		for (;i < tok.length; i++) {
+		while (i < tok.length) {
 			const token = tok[i]
 			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
 				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
@@ -79,9 +79,10 @@ const run = function(text, c = true) {
 					f: parseIntoFormula(formula)
 				})
 				formula = []
-				i -= 1
+				i--
 			}
 			console.log(i)
+			i++
 		}
 		return tokens
 	}
