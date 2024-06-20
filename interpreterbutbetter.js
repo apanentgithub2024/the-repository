@@ -5,7 +5,7 @@ const run = function(text, c = true) {
 	const tokensRe = new RegExp(ret.source + "|" + keys.source, "gs")
 	// I did it from seperate regexes, because it's an easier way to add syntax
 	function lexer(c) {
-		return c.match(tokens)
+		return c.match(tokensRe)
 	}
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
