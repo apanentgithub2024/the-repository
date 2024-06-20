@@ -54,9 +54,10 @@ const run = function(text, c = true) {
 					throw "ParseIntoFormulaError: Expected a formula token: " + token
 				}
 			}
+			return f
 		}
 		for (const token of tok) {
-			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*/.test(token)) {
+			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
 				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1] // The regex also matches the keyword. Thank Bredan we still have the "match" function.
 				tokens.push({
 					type: "dv",
@@ -112,6 +113,7 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
+		console.log(result)
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
