@@ -122,7 +122,7 @@ const run = function(text, c = true) {
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
-				code += `let ${t.v}=${compile(result[i+1])}`
+				code += `${code.length>0?";":""}let ${t.v}=${compile(result[i+1])}`
 			}
 		}
 		return code
