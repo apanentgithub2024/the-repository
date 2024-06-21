@@ -44,6 +44,11 @@ const run = function(text, c = true) {
 							type: "var",
 							v: token
 						})
+					} else if (/[\+\-\*\/]/.test(token)) {
+						f.push({
+							type: "ari",
+							o: token.trim()
+						})
 					} else {
 						f.push({
 							type: "ign"
@@ -108,13 +113,16 @@ const run = function(text, c = true) {
 						f += (token.n ? "!" : "=") + "=="
 						break
 					case "bo":
-						f += {"and":"&&","or":"||","xor":"!==","ot":""}[token.b.replace(/n/, "")]
-						if (token.b.includes("n")) {
+						f += {"and":"&&","or":"||","xnor":"^","ot":""}[token.b.replace(/^n/, "")]
+						if (token.b.startsWith("n") && token.b !== "and") {
 							f = "!(" + f + ")"
 						}
 						break
 					case "var":
 						f += token.v
+						break
+					case "ari":
+						f += token.o
 						break
 					case "ign":
 						break
