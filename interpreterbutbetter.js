@@ -98,16 +98,18 @@ const run = function(text, c = true) {
 		function compile(formula) {
 			const tokens = formula.f
 			let f = ""
-			for (const token of tokens) {
+			let i = 0
+			while (i < tokens.length) {
+				const token = tokens[i]
 				switch (token.type) {
 					case "st":
 						f += token.q + token.v + token.q
 						break
 					case "int":
-						f += token
+						f += token.v
 						break
 					case "dec":
-						f += token
+						f += token.v
 						break
 					case "eq":
 						f += (token.n ? "!" : "=") + "=="
@@ -122,11 +124,20 @@ const run = function(text, c = true) {
 						f += token.v
 						break
 					case "ari":
-						f += token.o
+						if (token.o == "*") {
+							if (tokens[i - 1].type == "st" && ["int","dec"].includes(tokens[i + 1].type)) {
+								f += ".repeat(" + tokens[i + 1].v + ")"
+								i++
+							} else {
+								f += token.o
+							}
+						} else {
+							f += token.o
+						}
 						break
 					case "ign":
 						break
-				}
+				i++
 			}
 			return f
 		}
