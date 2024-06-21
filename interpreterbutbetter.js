@@ -3,7 +3,9 @@ const run = function(text, c = true) {
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
-		return c.match(tokensRe)
+		const a = c.match(tokensRe)
+		console.log(a)
+		return a
 	}
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
@@ -57,13 +59,12 @@ const run = function(text, c = true) {
 					throw "ParseIntoFormulaError: Expected a formula token: " + token
 				}
 			}
-			console.log(f)
 			return f
 		}
 		let i = 0
 		while (i < tok.length) {
 			const token = tok[i]
-			if (state === "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
+			if (state == "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
 				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
 				tokens.push({
 					type: "dv",
@@ -89,13 +90,13 @@ const run = function(text, c = true) {
 			}
 			i++
 		}
-		console.log(tokens)
 		return tokens
 	}
 	const result = parser(text, lexer(text))
 	if (c) {
 		let code = "";
 		let t = ""
+		const variables = {}
 		function compile(formula) {
 			const tokens = formula.f
 			let f = ""
@@ -173,7 +174,8 @@ const run = function(text, c = true) {
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
-				code += `${code.length>0?";":""}let ${t.v}=${compile(result[i+1])}`
+				const r = compile(result[i+1])
+				code += `${code.length>0?";":""}let ${t.v}=${r}`
 			}
 		}
 		return code
