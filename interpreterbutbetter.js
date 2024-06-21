@@ -201,13 +201,16 @@ const run = function(text, c = true) {
 				code += `${i>0?";":""}let ${placeholder(t.v)}=${r}`
 				definedVariables.push(t.v)
 			} else if (t.type == "lo") {
+				if (!definedVariables.includes(t.v)) {
+					throw `CompilerError: The variable "${t.v}" has to be defined in order to be unlocked`
+				}
 				variables[t.v] = placeholder2(placeholder(t.v))
 				code += `${i>0?";":""}const ${placeholder(t.v)}=${t.v}`
 				lockedVariables.push(variables[t.v])
 			} else if (t.type == "ulo") {
 				const success = delete variables[t.v]
 				if (!success) {
-					throw `CompilerError: The variable "${t.v}" has to be locked to be unlocked`
+					throw `CompilerError: The variable "${t.v}" has to be locked in order to be unlocked`
 				} 
 			}
 		}
