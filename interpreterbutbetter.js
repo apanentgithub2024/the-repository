@@ -128,12 +128,12 @@ const run = function(text, c = true) {
 						} else {
 							f += {"and":"&&","or":"||","xor":"^","xnor":"^"}[token.b.replace(/^n/, "")]
 							if (token.b.startsWith("n")) {
-								f = "!(" + f + ")"
+								f = "!(" + f
 							} else if (token.b == "xnor" || token.b === "xor") {
 								f = "Boolean(" + f + ")"
 							}
 							if (token.b == "xnor") {
-								f = "!(" + f + ")"
+								f = "!(" + f
 							}
 						}
 						break
@@ -161,6 +161,9 @@ const run = function(text, c = true) {
 						break
 					case "ign":
 						break
+				}
+				if (tokens[i - 1].type == "bo" && (tokens[i - 1].b.startsWith("n") || tokens[i - 1].b[1] == "n") && tokens[i - 1].b !== "not") {
+					f += ")"
 				}
 				i++
 			}
