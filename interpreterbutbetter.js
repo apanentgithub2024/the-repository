@@ -115,9 +115,11 @@ const run = function(text, c = true) {
 						f += (token.n ? "!" : "=") + "=="
 						break
 					case "bo":
-						f += {"and":"&&","or":"||","xnor":"^","ot":""}[token.b.replace(/^n/, "")]
-						if (token.b.startsWith("n") && token.b !== "and") {
+						f += {"and":"&&","or":"||","xnor":"^","ot":"",""}[token.b.replace(/^n/, "")]
+						if (token.b.startsWith("n")) {
 							f = "!(" + f + ")"
+						} else if (token.b == "xnor") {
+							f = "Boolean(" + f + ")"
 						}
 						break
 					case "var":
@@ -140,7 +142,7 @@ const run = function(text, c = true) {
 				i++
 			}
 			return f
-		}
+			}
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
