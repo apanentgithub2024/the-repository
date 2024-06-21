@@ -115,11 +115,14 @@ const run = function(text, c = true) {
 						f += (token.n ? "!" : "=") + "=="
 						break
 					case "bo":
-						f += {"and":"&&","or":"||","xnor":"^","ot":"",""}[token.b.replace(/^n/, "")]
+						f += {"and":"&&","or":"||","xor":"^","ot":"","xnor":"^"}[token.b.replace(/^n/, "")]
 						if (token.b.startsWith("n")) {
 							f = "!(" + f + ")"
-						} else if (token.b == "xnor") {
+						} else if (token.b == "xnor" || token.b === "xor") {
 							f = "Boolean(" + f + ")"
+						}
+						if (token.b == "xnor") {
+							f = "!(" + f + ")"
 						}
 						break
 					case "var":
