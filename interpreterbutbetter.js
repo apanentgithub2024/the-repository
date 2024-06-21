@@ -1,6 +1,6 @@
 const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
-	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
+	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
 		const a = c.match(tokensRe)
@@ -40,7 +40,7 @@ const run = function(text, c = true) {
 							type: "bo",
 							b: token.trim()
 						})
-					} else if (/^(([a-zA-Z_]([a-zA-Z_0-9]*))|[a-zA-Z_])/.test(token)) {
+					} else if (/(([a-zA-Z_]([a-zA-Z_0-9]*))|[a-zA-Z_])/.test(token)) {
 						f.push({
 							type: "var",
 							v: token
@@ -71,7 +71,7 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				state = "for"
-			} else if (state == "for" && ret.test(token)) {
+			} else if (state == "for" && ret.test(token) && !/define|lock/.test(token)) {
 				formula.push(token)
 				if (i + 1 === tok.length) {
 					tokens.push({
@@ -79,7 +79,7 @@ const run = function(text, c = true) {
 						f: parseIntoFormula(formula)
 					})
 				}
-			} else if (state == "for" && !ret.test(token)) {
+			} else if (state == "for" && (!ret.test(token) || /define|lock/.test(token))) {
 				state = ""
 				tokens.push({
 					type: "f",
@@ -87,6 +87,12 @@ const run = function(text, c = true) {
 				})
 				formula = []
 				i--
+			} else if (state == "" && /(un?)lock\s+([a-zA-Z_]([a-zA-Z_0-9]*))/.test(token)) {
+				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
+				tokens.push({
+					type: (/unlock\s+/.test(token)?"u":"") + "lo",
+					v: varname
+				})
 			}
 			i++
 		}
@@ -97,6 +103,23 @@ const run = function(text, c = true) {
 		let code = "";
 		let t = ""
 		const variables = {}
+		const definedVariables = []
+		const lockedVariables = []
+		const js = ["var","let","const","try","catch","finally","void","function","if","else","class","extends","true","false","return","yield"]
+		function placeholderV(v) {
+			let va = v
+			while (definedVariables.includes(va) || js.includes(va)) {
+				va += "_"
+			}
+			return va
+		}
+		function placeholder2(v) {
+			let va = v
+			while (lockedVariables.includes(va) || js.includes(va)) {
+				va += "_"
+			}
+			return va
+		}
 		function compile(formula) {
 			const tokens = formula.f
 			let f = ""
@@ -140,7 +163,7 @@ const run = function(text, c = true) {
 						}
 						break
 					case "var":
-						f += token.v
+						f += Object.prototype.hasOwnProperty.call(variables, token.v)?variables[token.v]:token.v
 						break
 					case "ari":
 						if (token.o == "*") {
@@ -175,7 +198,17 @@ const run = function(text, c = true) {
 			const t = result[i]
 			if (t.type == "dv") {
 				const r = compile(result[i+1])
-				code += `${code.length>0?";":""}let ${t.v}=${r}`
+				code += `${i>0?";":""}let ${placeholder(t.v)}=${r}`
+				definedVariables.push(t.v)
+			} else if (t.type == "lo") {
+				variables[t.v] = placeholder2(placeholder(t.v))
+				code += `${i>0?";":""}const ${placeholder(t.v)}=${t.v}`
+				lockedVariables.push(variables[t.v])
+			} else if (t.type == "ulo") {
+				const success = delete variables[t.v]
+				if (!success) {
+					throw `CompilerError: The variable "${t.v}" has to be locked to be unlocked`
+				} 
 			}
 		}
 		return code
