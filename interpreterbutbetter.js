@@ -1,6 +1,5 @@
 const run = function(text, c = true) {
 	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
-	const rete = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*/
 	const keys = /(define)\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|(delete)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
@@ -39,7 +38,7 @@ const run = function(text, c = true) {
 							type: "bo",
 							b: token.trim()
 						})
-					} else if (/([a-zA-Z_]([a-zA-Z_0-9]*))/.test(token)) {
+					} else if (/^(([a-zA-Z_]([a-zA-Z_0-9]*))|[a-zA-Z_])/.test(token)) {
 						f.push({
 							type: "var",
 							v: token
@@ -58,6 +57,7 @@ const run = function(text, c = true) {
 					throw "ParseIntoFormulaError: Expected a formula token: " + token
 				}
 			}
+			console.log(f)
 			return f
 		}
 		let i = 0
@@ -70,7 +70,7 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				state = "for"
-			} else if (state == "for" && rete.test(token)) {
+			} else if (state == "for" && ret.test(token)) {
 				formula.push(token)
 				if (i + 1 === tok.length) {
 					tokens.push({
@@ -78,7 +78,7 @@ const run = function(text, c = true) {
 						f: parseIntoFormula(formula)
 					})
 				}
-			} else if (state == "for" && !rete.test(token)) {
+			} else if (state == "for" && !ret.test(token)) {
 				state = ""
 				tokens.push({
 					type: "f",
@@ -89,6 +89,7 @@ const run = function(text, c = true) {
 			}
 			i++
 		}
+		console.log(tokens)
 		return tokens
 	}
 	const result = parser(text, lexer(text))
@@ -162,7 +163,7 @@ const run = function(text, c = true) {
 					case "ign":
 						break
 				}
-				if (tokens[i - 1].type == "bo" && (tokens[i - 1].b.startsWith("n") || tokens[i - 1].b[1] == "n") && tokens[i - 1].b !== "not") {
+				if (i > 0 && tokens[i - 1].type == "bo" && (tokens[i - 1].b.startsWith("n") || tokens[i - 1].b[1] == "n") && tokens[i - 1].b !== "not") {
 					f += ")"
 				}
 				i++
