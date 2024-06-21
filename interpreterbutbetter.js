@@ -1,5 +1,5 @@
 const run = function(text, c = true) {
-	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_][a-zA-Z_0-9]*)/
+	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
@@ -70,7 +70,7 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				state = "for"
-			} else if (state == "for" && ret.test(token) && !/define|lock/.test(token)) {
+			} else if (state == "for" && ret.test(token) && !/define|(un?)lock/.test(token) && token != "lock" && token != "unlock") {
 				formula.push(token)
 				if (i + 1 === tok.length) {
 					tokens.push({
@@ -78,7 +78,7 @@ const run = function(text, c = true) {
 						f: parseIntoFormula(formula)
 					})
 				}
-			} else if (state == "for" && (!ret.test(token) || /define|lock/.test(token))) {
+			} else if (state == "for" && (!ret.test(token) || /define|(un?)lock/.test(token) || token == "lock" || token == "unlock")) {
 				state = ""
 				tokens.push({
 					type: "f",
@@ -86,12 +86,13 @@ const run = function(text, c = true) {
 				})
 				formula = []
 				i--
-			} else if (state == "" && /(un?)lock\s+([a-zA-Z_]([a-zA-Z_0-9]*))/.test(token)) {
-				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
+			} else if (state == "" && (token == "lock" || token == "unlock")) {
+				const varname = (i < tok.length - 1 ? tok[i + 1] : "")
 				tokens.push({
-					type: (/unlock\s+/.test(token)?"u":"") + "lo",
+					type: (token.startsWith("un")?"u":"") + "lo",
 					v: varname
 				})
+				i++
 			}
 			i++
 		}
