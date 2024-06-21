@@ -115,14 +115,26 @@ const run = function(text, c = true) {
 						f += (token.n ? "!" : "=") + "=="
 						break
 					case "bo":
-						f += {"and":"&&","or":"||","xor":"^","ot":"","xnor":"^"}[token.b.replace(/^n/, "")]
-						if (token.b.startsWith("n")) {
-							f = "!(" + f + ")"
-						} else if (token.b == "xnor" || token.b === "xor") {
-							f = "Boolean(" + f + ")"
-						}
-						if (token.b == "xnor") {
-							f = "!(" + f + ")"
+						if (token.b == "not") {
+							if (!tokens[i - 1]) {
+								f += "!"
+							} else {
+								if (tokens[i - 1].type == "bo") {
+									f += "!"
+								} else {
+									throw "CompilerError: The \"not\" logic operator must *only* have a right parameter, not also the left parameter."
+								}
+							}
+						} else {
+							f += {"and":"&&","or":"||","xor":"^","xnor":"^"}[token.b.replace(/^n/, "")]
+							if (token.b.startsWith("n")) {
+								f = "!(" + f + ")"
+							} else if (token.b == "xnor" || token.b === "xor") {
+								f = "Boolean(" + f + ")"
+							}
+							if (token.b == "xnor") {
+								f = "!(" + f + ")"
+							}
 						}
 						break
 					case "var":
