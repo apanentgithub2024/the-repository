@@ -4,7 +4,6 @@ const run = function(text, c = true) {
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
 		const a = c.match(tokensRe)
-		console.log(a)
 		return a
 	}
 	function parser(original, tok) {
@@ -106,7 +105,7 @@ const run = function(text, c = true) {
 		const definedVariables = []
 		const lockedVariables = []
 		const js = ["var","let","const","try","catch","finally","void","function","if","else","class","extends","true","false","return","yield"]
-		function placeholderV(v) {
+		function placeholder(v) {
 			let va = v
 			while (definedVariables.includes(va) || js.includes(va)) {
 				va += "_"
