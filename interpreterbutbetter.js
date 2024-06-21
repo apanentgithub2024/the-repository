@@ -139,10 +139,11 @@ const run = function(text, c = true) {
 						break
 					case "ign":
 						break
+				}
 				i++
 			}
 			return f
-			}
+		}
 		for (let i = 0; i < result.length; i++) {
 			const t = result[i]
 			if (t.type == "dv") {
