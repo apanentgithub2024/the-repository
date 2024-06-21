@@ -148,6 +148,13 @@ const run = function(text, c = true) {
 							} else {
 								f += token.o
 							}
+						} else if (token.o == "-") {
+							if (tokens[i - 1].type == "st" && ["int","dec"].includes(tokens[i + 1].type)) {
+								f += ".slice(-" + tokens[i + 1].v + ")"
+								i++
+							} else {
+								f += token.o
+							}
 						} else {
 							f += token.o
 						}
