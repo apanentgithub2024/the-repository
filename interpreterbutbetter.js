@@ -1,6 +1,6 @@
 const run = function(text, c = true) {
-	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_]([a-zA-Z_0-9]*))/
-	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))/
+	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|([a-zA-Z_]([a-zA-Z_0-9]*))|(str)\s*=>\s*/
+	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))|if\s*|log\s*=>\s*/
 	const tokensRe = new RegExp(keys.source + "|" + ret.source + "|=", "gs")
 	function lexer(c) {
 		const a = c.match(tokensRe)
@@ -70,7 +70,7 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				state = "for"
-			} else if (state == "for" && ret.test(token) && !/define|(un?)lock/.test(token) && token != "lock" && token != "unlock") {
+			} else if (state.startsWith("for") && ret.test(token) && !/define|(un?)lock/.test(token) && token != "lock" && token != "unlock" && !token.startsWith("log")) {
 				formula.push(token)
 				if (i + 1 === tok.length) {
 					tokens.push({
@@ -78,7 +78,7 @@ const run = function(text, c = true) {
 						f: parseIntoFormula(formula)
 					})
 				}
-			} else if (state == "for" && (!ret.test(token) || /define|(un?)lock/.test(token) || token == "lock" || token == "unlock")) {
+			} else if (state.startsWith("for") && (!ret.test(token) || /define|(un?)lock/.test(token) || token == "lock" || token == "unlock" || token.startsWith("log"))) {
 				state = ""
 				tokens.push({
 					type: "f",
@@ -93,6 +93,15 @@ const run = function(text, c = true) {
 					v: varname
 				})
 				i++
+			} else if (state == "" && token.startsWith("log")) {
+				tokens.push({
+					type: "log"
+				})
+				state = "for"
+			} else if (state == "" && token.startsWith("if")) {
+				tokens.push({
+					type: "if"
+				})
 			}
 			i++
 		}
@@ -106,16 +115,10 @@ const run = function(text, c = true) {
 		const definedVariables = []
 		const lockedVariables = []
 		const js = ["var","let","const","try","catch","finally","void","function","if","else","class","extends","true","false","return","yield"]
+		const variableTypes = {}
 		function placeholder(v) {
 			let va = v
-			while (definedVariables.includes(va) || js.includes(va)) {
-				va += "_"
-			}
-			return va
-		}
-		function placeholder2(v) {
-			let va = v
-			while (lockedVariables.includes(va) || js.includes(va)) {
+			while (definedVariables.includes(va) || js.includes(va) || lockedVariables.includes(va)) {
 				va += "_"
 			}
 			return va
@@ -166,15 +169,17 @@ const run = function(text, c = true) {
 						f += Object.prototype.hasOwnProperty.call(variables, token.v)?variables[token.v]:token.v
 						break
 					case "ari":
+						const lt = tokens[i - 1]
+						const isstring = lt.type == "st" || (lt.type == "var" && variableTypes[lt.v] == "st")
 						if (token.o == "*") {
-							if (tokens[i - 1].type == "st" && ["int","dec"].includes(tokens[i + 1].type)) {
+							if (isstring && ["int","dec"].includes(tokens[i + 1].type)) {
 								f += ".repeat(" + tokens[i + 1].v + ")"
 								i++
 							} else {
 								f += token.o
 							}
 						} else if (token.o == "-") {
-							if (tokens[i - 1].type == "st" && ["int","dec"].includes(tokens[i + 1].type)) {
+							if (isstring && ["int","dec"].includes(tokens[i + 1].type)) {
 								f += ".slice(-" + tokens[i + 1].v + ")"
 								i++
 							} else {
@@ -198,13 +203,14 @@ const run = function(text, c = true) {
 			const t = result[i]
 			if (t.type == "dv") {
 				const r = compile(result[i+1])
+				variableTypes[t.v] = /(("((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)')((\.repeat\(\d+\)|\.slice\(-(\d+)\))?)(\+?))*/s.test(r) || r.includes('+""') ? "st" : ""
 				code += `${i>0?";":""}let ${placeholder(t.v)}=${r}`
 				definedVariables.push(t.v)
 			} else if (t.type == "lo") {
 				if (!definedVariables.includes(t.v)) {
 					throw `CompilerError: The variable "${t.v}" has to be defined in order to be unlocked`
 				}
-				variables[t.v] = placeholder2(placeholder(t.v))
+				variables[t.v] = placeholder(t.v)
 				code += `${i>0?";":""}const ${placeholder(t.v)}=${t.v}`
 				lockedVariables.push(variables[t.v])
 			} else if (t.type == "ulo") {
@@ -212,6 +218,11 @@ const run = function(text, c = true) {
 				if (!success) {
 					throw `CompilerError: The variable "${t.v}" has to be locked in order to be unlocked`
 				} 
+			} else if (t.type == "log") {
+				const r = compile(result[i+1])
+				code += `${i>0?";":""}console.log(${r})`
+			} else if (t.type == "if") {
+				
 			}
 		}
 		return code
