@@ -1,10 +1,10 @@
 // Writerbot
 const writestory = (function(js) {
 	const malenames = ["Anthony", "Antony", "Aaron", "Arco", "Acroah", "Arcoah", "Arthur", "Ben", "Bob", "Bobby", "Billy", "Bradley", "Brock", "Barney", "Bruce", "Bratt", "Bruno", "Boris", "Connor", "Cooper", "Carl", "Carlo", "Dwayne", "Drake", "Derick", "Darwin", "Darr", "Dan", "Diego", "Erick", "Ethan", "Eric", "Eron", "Elmore", "Elnor", "Freddy", "Fred", "Frank", "Fond", "Finn", "Foir", "Garrett", "Harriot", "Harold", "Harry", "Harroh", "Hong", "Ichabod", "Iggy", "Jake", "Jack", "Jon", "Johnny", "John", "Jared", "Jarn", "Leland", "Loran", "Lared", "Liam", "Manny", "Mone", "Nobi", "Nobita", "Orion", "Oran", "Periwinkle", "Peri", "Pern", "Quinn", "Rory", "Rick", "Rohnny", "Riddan", "Riddy", "Sam", "Sammy", "Sidney", "Sid", "Sonn", "Von", "Wyatt", "Waro", "Yuri", "Yoddy", "Zach", "Zachary"]
-	const femalenames = ["Annie", "Anna", "Brianna", "Britannica", "Crystal", "Carlie", "Carol", "Carolina", "Caroline", "Daniel", "Dora"]
-	const nonbinarynames = ["Florian"]
+	const femalenames = ["Annie", "Anna", "Brianna", "Britannica", "Bella", "Crystal", "Carlie", "Carol", "Carolina", "Caroline", "Daniel", "Dora", "Dona", "Elly", "Fionna", "Frizzle", "Fonda", "Floria", "Gabriel", "Gonda", "Honnah", "Hannah", "Hora", "Jade", "Jill", "Jane", "Lily", "Lilliana", "Lia", "Lira", "Mona", "Monie", "Rana", "Raini", "Rainie", "Sora", "Sona", "Tina", "Traini", "Valerie", "Vanessa"]
+	const nonbinarynames = ["Florian", "Hern"]
 	const msg = `WARNING: This story is only meant for education purposes! This means you shouldn't take any notes from this story, nor learn anything from this story!
-If you are reading this message, you can proceed into the story and begin reading it.`
+If you are reading this message, you can proceed into the story and begin reading it.\n\n`
 	const database = {
 		characters: [
 			{
@@ -24,7 +24,7 @@ If you are reading this message, you can proceed into the story and begin readin
 						}
 					}
 				],
-				locations: /(?:)/g
+				locations: /|/g
 			},
 			{
 				name: "Barack Obama",
