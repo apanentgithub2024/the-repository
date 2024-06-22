@@ -1,18 +1,17 @@
 const run = function(text, c = true) {
-	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|(?!define)(?!lock)(?!unlock)([a-zA-Z_]([a-zA-Z_0-9]*))|str\s*=>\s*/
-	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))|if\s*|log\s*=>\s*/
+	const ret = /"((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)'|\d+|\d*\.(\d*)|\s*([\+\-\*\^]|and|or|xor|not|nand|nor|xnor|==|\^=)\s*|(?!define|lock|unlock|if|log|string)([a-zA-Z_]([a-zA-Z_0-9]*))|string\s*=>\s*/
+	const keys = /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=\s*|((un?)lock)\s+([a-zA-Z_]([a-zA-Z_0-9]*))|if\s+|log\s*=>\s*|end(\s+|;|\n)|getTime\s*=>\s*\(\)/
 	const tokensRe = new RegExp(ret.source + "|" + keys.source + "|=", "gs")
 	function lexer(c) {
 		const a = c.match(tokensRe)
+		console.log(a)
 		return a
 	}
 	function parser(original, tok) {
 		const check = original.replace(tokensRe, "")
-		if (/[^ \r\t\n;]/.test(check)) {
-			throw "ParserError: Invalid token has been found: " + check.match(/[^ \r\t\n;]+/g)[0]
+		if (/[^ \r\t\n;\>]/.test(check)) {
+			throw "ParserError: Invalid token has been found: " + check.match(/[^ \r\t\n;\>]+/g)[0]
 		}
-		let tokens = []
-		let state = ""
 		let formula = []
 		function parseIntoFormula(group) {
 			let f = []
@@ -39,6 +38,10 @@ const run = function(text, c = true) {
 							type: "bo",
 							b: token.trim()
 						})
+					} else if (/getTime\s*=>\s*\(\)/.test(token)) {
+						f.push({
+							type: "getti"
+						})
 					} else if (/(([a-zA-Z_]([a-zA-Z_0-9]*))|[a-zA-Z_])/.test(token)) {
 						f.push({
 							type: "var",
@@ -60,61 +63,79 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
-		let i = 0
-		while (i < tok.length) {
-			const token = tok[i]
-			if (state == "" && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
-				const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
-				tokens.push({
-					type: "dv",
-					v: varname
-				})
-				state = "for"
-			} else if (state.startsWith("for") && ret.test(token) && !/define|(un?)lock/.test(token) && token != "lock" && token != "unlock" && !token.startsWith("log")) {
-				formula.push(token)
-				if (i + 1 === tok.length) {
+		function parseLines(tok) {
+			let tokens = []
+			let i = 0
+			let lines = []
+			let state = ""
+			while (i < tok.length) {
+				const token = tok[i]
+				if (!state.startsWith("for") && /define\s+([a-zA-Z_]([a-zA-Z_0-9]*))\s*=/.test(token)) {
+					const varname = token.match(/([a-zA-Z_]([a-zA-Z0-9_]*))/g)[1]
+					tokens.push({
+						type: "dv",
+						v: varname
+					})
+					state = "for"
+				} else if (state.startsWith("for") && ret.test(token) && !/define|(un?)lock/.test(token) && token != "lock" && token != "unlock" && !token.startsWith("if") && !token.startsWith("log") && !token.startsWith("end")) {
+					formula.push(token)
+					if (i + 1 === tok.length) {
+						tokens.push({
+							type: "f",
+							f: parseIntoFormula(formula)
+						})
+					}
+				} else if (state.startsWith("for") && (!ret.test(token) || /define|(un?)lock/.test(token) || token == "lock" || token == "unlock" || token.startsWith("if") || token.startsWith("log") || token.startsWith("end"))) {
+					state = (state.endsWith("if") ? "if" : "")
 					tokens.push({
 						type: "f",
 						f: parseIntoFormula(formula)
 					})
+					formula = []
+					i--
+				} else if (state == "" && (token == "lock" || token == "unlock")) {
+					const varname = (i < tok.length - 1 ? tok[i + 1] : "")
+					tokens.push({
+						type: (token.startsWith("un")?"u":"") + "lo",
+						v: varname
+					})
+					i++
+				} else if (state == "" && token.startsWith("log")) {
+					tokens.push({
+						type: "log"
+					})
+					state = "for"
+				} else if (state == "" && token.startsWith("if")) {
+					tokens.push({
+						type: "if"
+					})
+					state = "forif"
+				} else if (state === "if") {
+					if (token.startsWith("end")) {
+						tokens.push({
+							type: "sou", // source
+							f: parseLines(lines)
+						})
+						state = ""
+						lines = []
+					} else {
+						lines.push(token)
+					}
 				}
-			} else if (state.startsWith("for") && (!ret.test(token) || /define|(un?)lock/.test(token) || token == "lock" || token == "unlock" || token.startsWith("log"))) {
-				state = ""
-				tokens.push({
-					type: "f",
-					f: parseIntoFormula(formula)
-				})
-				formula = []
-				i--
-			} else if (state == "" && (token == "lock" || token == "unlock")) {
-				const varname = (i < tok.length - 1 ? tok[i + 1] : "")
-				tokens.push({
-					type: (token.startsWith("un")?"u":"") + "lo",
-					v: varname
-				})
 				i++
-			} else if (state == "" && token.startsWith("log")) {
-				tokens.push({
-					type: "log"
-				})
-				state = "for"
-			} else if (state == "" && token.startsWith("if")) {
-				tokens.push({
-					type: "if"
-				})
 			}
-			i++
+			return tokens
 		}
-		return tokens
+		const result = parseLines(tok)
+		return result
 	}
 	const result = parser(text, lexer(text))
 	if (c) {
-		let code = "";
 		let t = ""
 		const variables = {}
 		const definedVariables = []
 		const lockedVariables = []
-		const js = ["var","let","const","try","catch","finally","void","function","if","else","class","extends","true","false","return","yield"]
+		const js = ["var","let","const","try","catch","finally","void","function","if","else","class","extends","true","false","return","yield","time"]
 		const variableTypes = {}
 		function placeholder(v) {
 			let va = v
@@ -189,6 +210,9 @@ const run = function(text, c = true) {
 							f += token.o
 						}
 						break
+					case "getti":
+						f += "(performance.now()-time)/1000"
+						break
 					case "ign":
 						break
 				}
@@ -199,32 +223,42 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
-		for (let i = 0; i < result.length; i++) {
-			const t = result[i]
-			if (t.type == "dv") {
-				const r = compile(result[i+1])
-				variableTypes[t.v] = /(("((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)')((\.repeat\(\d+\)|\.slice\(-(\d+)\))?)(\+?))*/s.test(r) || r.includes('+""') ? "st" : ""
-				code += `${i>0?";":""}let ${placeholder(t.v)}=${r}`
-				definedVariables.push(t.v)
-			} else if (t.type == "lo") {
-				if (!definedVariables.includes(t.v)) {
-					throw `CompilerError: The variable "${t.v}" has to be defined in order to be unlocked`
+		const y = result[i+1].f.some(i => i.type === "getti")
+		function compileLines(result, isbase) {
+			let code = "" + (isbase ? (y ? "const time=performance.now();" : "") : "")
+			let i = 0
+			while (i < result.length) {
+				const t = result[i]
+				if (t.type == "dv") {
+					const r = compile(result[i+1])
+					variableTypes[t.v] = /(("((?:[^"\\]|\\.)*)"|'((?:[^"\\]|\\.)*)')((\.repeat\(\d+\)|\.slice\(-(\d+)\))?)(\+?))*/s.test(r) || r.includes('+""') ? "st" : ""
+					code += `${i>0?";":""}let ${placeholder(t.v)}=${r}`
+					definedVariables.push(t.v)
+				} else if (t.type == "lo") {
+					if (!definedVariables.includes(t.v)) {
+						throw `CompilerError: The variable "${t.v}" has to be defined in order to be unlocked`
+					}
+					variables[t.v] = placeholder(t.v)
+					code += `${i>0?";":""}const ${placeholder(t.v)}=${t.v}`
+					lockedVariables.push(variables[t.v])
+				} else if (t.type == "ulo") {
+					const success = delete variables[t.v]
+					if (!success) {
+						throw `CompilerError: The variable "${t.v}" has to be locked in order to be unlocked`
+					} 
+				} else if (t.type == "log") {
+					const r = compile(result[i+1])
+					code += `${i>0?";":""}console.log(${r})`
+				} else if (t.type == "if") {
+					const condition = compile(result[i+1])
+					const cache = result[i+2].f.filter(i => i.type !== "f").length
+					code += `${i>0?";":""}if(${condition})${cache > 1 ? "{" : ""}${compileLines(result[i+2].f, false)}${cache > 1 ? "}" : ""}`
+					i += 2
 				}
-				variables[t.v] = placeholder(t.v)
-				code += `${i>0?";":""}const ${placeholder(t.v)}=${t.v}`
-				lockedVariables.push(variables[t.v])
-			} else if (t.type == "ulo") {
-				const success = delete variables[t.v]
-				if (!success) {
-					throw `CompilerError: The variable "${t.v}" has to be locked in order to be unlocked`
-				} 
-			} else if (t.type == "log") {
-				const r = compile(result[i+1])
-				code += `${i>0?";":""}console.log(${r})`
-			} else if (t.type == "if") {
-				
+				i++
 			}
+			return code
 		}
-		return code
+		return compileLines(result, true)
 	}
 }
