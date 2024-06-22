@@ -24,17 +24,17 @@ If you are reading this message, you can proceed into the story and begin readin
 						}
 					}
 				],
-				locations: /|/g
+				locations: /|/
 			},
 			{
 				name: "Barack Obama",
 				description: ["President of United States", "Saved the laws of United States"],
-				locations: /\b(us|united states)\b/g
+				locations: /\b(us|united states)\b/
 			},
 			{
 				name: "Donald Trump",
 				description: ["President of United States", "Bullies Barack Obama", "Bullies Joe Biden"],
-				locations: /\b(us|united states)\b/g
+				locations: /\b(us|united states)\b/
 			},
 			{
 				name: "Joe Biden"
