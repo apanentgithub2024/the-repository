@@ -1,4 +1,4 @@
-function() {
+(function() {
 	const _exec = function(code) {
 		try {
 			eval(code)
@@ -11,7 +11,7 @@ function() {
 	const originNumber = Number
 	const windowE = _exec("window")
 	const variableExists = function(varname) {
-		return !/^(?![0-9])([a-z0-9_$]*)$/.test(varname) ? (function(){
+		return /^[^a-zA-Z_$][^a-zA-Z_$0-9]*$/.test(varname) ? (function(){
 			throw new Error("The variable's identifier must be compatible with JavaScript's initial variable letterset! Run WebTech.javaScript.getInfo().varCharSet_help for more info.")
 		}()) : (windowE ? Object.prototype.hasOwnProperty.call(window, varname) || _exec(varname) : false)
 	}
@@ -60,12 +60,12 @@ function() {
 			} else {
 				console.warn("You must connect only a function to the onTick event.")
 			}
-		},
+		}
 		end() {
 			this.endTime = 0
 		}
 	}
-	const json {
+	const json = {
 		javaScript: {
 			getInfo: function() {
 				return {
@@ -106,4 +106,4 @@ function() {
 	if (json.environment == "Browser") {
 		window.WebTech = json
 	}
-}()
+})()
