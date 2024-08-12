@@ -149,7 +149,7 @@ const run = function(text) {
 						variables.set(defV.ident, parseEquation(parse.parses))
 						result = variables.get(defV.ident)
 					} else {
-						throw new SyntaxError("The value (" + parse.parses.map(i => {"val": i[i.value], "arith": i.operand}[i.type]).join(" ") + ") is provided, but doesn't have any use in the code.")
+						throw new SyntaxError("The value (" + parse.parses.map(i => ({"val": i[i.value], "arith": i.operand})[i.type]).join(" ") + ") is provided, but doesn't have any use in the code.")
 					}
 					break
 			}
