@@ -102,38 +102,36 @@ const run = function(text) {
 			let prevMemory = null
 			let type = null
 			for (const parse of parses) {
-				if (type === null) {
-					switch (parse.type) {
-						case "val":
-							prevMemory = memory
-							const value = parse[parse.value]
-							memory.value = parse.value == "string" ? parse.stringV : value
-							memory.type = parse.value
-							if (type !== null) {
-								if (["int", "num"].includes(memory.type)) {
-									memory.value = Number(memory.value)
-								}
-								if (type == "+") {
-									memory.value = prevMemory.value + memory.value
-								} else if (type == "-") {
-									if (prevMemory.type == "string" && memory.type == "num") {
-										memory.value = prevMemory.value.slice(-memory.value)
-									} else if ([prevMemory, memory].every(i => i.type == "number")) {
-										memory.value = prevMemory.value - memory.value
-									} else {
-										throw new SyntaxError("The value (" + prevMemory.value + ") which is a '" + prevMemory.type + "' can't be subtracted from another value that is a '" + memory.type + "'.")
-									}
+				switch (parse.type) {
+					case "val":
+						prevMemory = memory
+						const value = parse[parse.value]
+						memory.value = parse.value == "string" ? parse.stringV : value
+						memory.type = parse.value
+						if (type !== null) {
+							if (["int", "num"].includes(memory.type)) {
+								memory.value = Number(memory.value)
+							}
+							if (type == "+") {
+								memory.value = prevMemory.value + memory.value
+							} else if (type == "-") {
+								if (prevMemory.type == "string" && memory.type == "num") {
+									memory.value = prevMemory.value.slice(-memory.value)
+								} else if ([prevMemory, memory].every(i => i.type == "number")) {
+									memory.value = prevMemory.value - memory.value
+								} else {
+									throw new SyntaxError("The value (" + prevMemory.value + ") which is a '" + prevMemory.type + "' can't be subtracted from another value that is a '" + memory.type + "'.")
 								}
 							}
-							break
-						case "arith":
-							if (new Set(["int", "num", "string"]).has(memory.type)) {
-								type = memory.operand
-							} else {
-								throw new SyntaxError("The value (" + memory.value + ") which is a '" + memory.type + "' can't be used in an arithmetic equation, since the value isn't a form of a number, or a string.")
-							}
-							break
-					}
+						}
+						break
+					case "arith":
+						if (new Set(["int", "num", "string"]).has(memory.type)) {
+							type = memory.operand
+						} else {
+							throw new SyntaxError("The value (" + memory.value + ") which is a '" + memory.type + "' can't be used in an arithmetic equation, since the value isn't a form of a number, or a string.")
+						}
+						break
 				}
 			}
 			return memory.value
