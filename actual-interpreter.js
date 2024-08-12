@@ -40,7 +40,8 @@ const run = function(text) {
 				parses.push({
 					type: "val",
 					value: "string",
-					string: token.slice(1, -1)
+					string: token,
+					stringV: token.slice(1, -1)
 				})
 			} else if (arithmetic.test(token)) {
 				parses.push({
@@ -94,6 +95,49 @@ const run = function(text) {
 	}
 	function interpreter(parses) {
 		const variables = new Map()
+		let defV = {ident: null, is: false}
+		function parseEquation(parses) {
+			let memory = {type: "", value: null}
+			let prevMemory = null
+			let type = null
+			for (const parse of parses) {
+				if (type === null) {
+					switch (parse.type) {
+						case "val":
+							prevMemory = memory
+							const value = parse[parse.value]
+							memory.value = parse.value == "string" ? parse.stringV : value
+							memory.type = parse.value
+							if (type !== null) {
+								
+							}
+							break
+						case "arith":
+							if (new Set(["int", "num", "string"]).has(memory.type)) {
+								type = memory.operand
+							} else {
+								throw new SyntaxError("The value (" + memory.value + ") which is a '" + memory.type + "' can't be used in an arithmetic equation, since the value isn't a form of a number, or a string.")
+							}
+							break
+					}
+				}
+			}
+			return memory.value
+		}
+		for (const parse of parses) {
+			switch (parse.type) {
+				case "newvar":
+					defV.ident = parse.identifier
+					defV.is = true
+					break
+				case "equation":
+					if (defV.is) {
+						
+					} else {
+						throw new SyntaxError("The value (" + parse.parses.map(i => {val: i[i.value], arith: i.operand}[i.type]).join(" ") + ") is provided, but doesn't have any use in the code.")
+					}
+			}
+		}
 	}
 	return enhanceParses(parse(lexer(text)))
 }
