@@ -119,12 +119,12 @@ function exponent(a, b) {
 		let result = null
 		const cacheForms = new Set(["int", "num"])
 		function parseEquation(parses) {
-			let memory = { type: "", value: null }
+			let memory = {type: "",value: null}
 			let prevMemory = null
 			let type = null
 			let result = null
 			function parseEasy(token) {
-				if (["num", "int"].includes(token.value)) {
+				if (cacheForms.has(token.value)) {
 					return Number(token[token.value])
 				}
 				return token[token.value]
