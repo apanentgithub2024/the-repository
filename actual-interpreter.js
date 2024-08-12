@@ -93,9 +93,10 @@ const run = function(text) {
 		}
 		return pars
 	}
-	function interpreter(parses) {
+	function interpret(parses) {
 		const variables = new Map()
 		let defV = {ident: null, is: false}
+		let result = null
 		function parseEquation(parses) {
 			let memory = {type: "", value: null}
 			let prevMemory = null
@@ -109,7 +110,20 @@ const run = function(text) {
 							memory.value = parse.value == "string" ? parse.stringV : value
 							memory.type = parse.value
 							if (type !== null) {
-								
+								if (["int", "num"].includes(memory.type)) {
+									memory.value = Number(memory.value)
+								}
+								if (type == "+") {
+									memory.value = prevMemory.value + memory.value
+								} else if (type == "-") {
+									if (prevMemory.type == "string" && memory.type == "num") {
+										memory.value = prevMemory.value.slice(-memory.value)
+									} else if ([prevMemory, memory].every(i => i.type == "number")) {
+										memory.value = prevMemory.value - memory.value
+									} else {
+										throw new SyntaxError("The value (" + prevMemory.value + ") which is a '" + prevMemory.type + "' can't be subtracted from another value that is a '" + memory.type + "'.")
+									}
+								}
 							}
 							break
 						case "arith":
@@ -132,12 +146,15 @@ const run = function(text) {
 					break
 				case "equation":
 					if (defV.is) {
-						
+						variables.set(defV.ident, parseEquation(parse.parses))
+						result = variables.get(defV.ident)
 					} else {
 						throw new SyntaxError("The value (" + parse.parses.map(i => {val: i[i.value], arith: i.operand}[i.type]).join(" ") + ") is provided, but doesn't have any use in the code.")
 					}
+					break
 			}
 		}
+		return result
 	}
-	return enhanceParses(parse(lexer(text)))
+	return interpret(enhanceParses(parse(lexer(text))))
 }
