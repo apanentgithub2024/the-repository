@@ -93,48 +93,87 @@ const run = function(text) {
 		}
 		return pars
 	}
+function exponent(a, b) {
+	if (a === 0 && b === 0) {
+		return 1
+	} else if (a === 0) {
+		return 0
+	} else if (b === 0 || a === 1) {
+		return 1
+	} else if (b === 0.5) {
+		return Math.sqrt(a)
+	} else if (b % 1 === 0) {
+		let result = a
+		const cache = Math.abs(b) - 1
+		for (let i = 0; i < cache; i++) {
+			result = result * a
+		}
+		return b < 0 ? 1 / result : result
+	} else {
+		return Math.exp(b * Math.log(a))
+	}
+}
 	function interpret(parses) {
 		const variables = new Map()
 		let defV = {ident: null, is: false}
 		let result = null
+		const cacheForms = new Set(["int", "num"])
 		function parseEquation(parses) {
-			let memory = {type: "", value: null}
+			let memory = { type: "", value: null }
 			let prevMemory = null
 			let type = null
+			let result = null
+			function parseEasy(token) {
+				if (["num", "int"].includes(token.value)) {
+					return Number(token[token.value])
+				}
+				return token[token.value]
+			}
 			for (const parse of parses) {
 				switch (parse.type) {
 					case "val":
 						prevMemory = memory
 						const value = parse[parse.value]
-						memory.value = parse.value == "string" ? parse.stringV : value
+						memory.value = parse.value === "string" ? parse.stringV : value
 						memory.type = parse.value
 						if (type !== null) {
-							if (["int", "num"].includes(memory.type)) {
+							if (cacheForms.has(memory.type)) {
 								memory.value = Number(memory.value)
-							}
-							if (type == "+") {
-								memory.value = prevMemory.value + memory.value
-							} else if (type == "-") {
-								if (prevMemory.type == "string" && memory.type == "num") {
-									memory.value = prevMemory.value.slice(-memory.value)
-								} else if ([prevMemory, memory].every(i => i.type == "number")) {
-									memory.value = prevMemory.value - memory.value
-								} else {
-									throw new SyntaxError("The value (" + prevMemory.value + ") which is a '" + prevMemory.type + "' can't be subtracted from another value that is a '" + memory.type + "'.")
+								if (prevMemory) {
+									if (type === "+") {
+										result = (result === null ? parseEasy(prevMemory.value) : result) + parseEasy(memory.value)
+									} else if (type === "-") {
+										if (prevMemory.value == "string") {
+											result = (result === null ? prevMemory.value : result).slice(parseEasy(memory.value) * -1)
+										} else {
+											result = (result === null ? parseEasy(prevMemory.value) : result) + parseEasy(memory.value)
+										}
+									} else if (type === "*") {
+										result = (result === null ? parseEasy(prevMemory.value) : result) * parseEasy(memory.value)
+									} else if (type === "/") {
+										result = (result === null ? parseEasy(prevMemory.value) : result) / parseEasy(memory.value)
+									} else if (type === "^") {
+										result = exponent((result === null ? parseEasy(prevMemory.value) : result), parseEasy(memory.value))
+									}
 								}
+							} else {
+								throw new SyntaxError(`The value (${prevMemory.value}) which is a '${prevMemory.type}' can't be used with operator '${type}' because it's not a number.`)
 							}
-						}
-						break
-					case "arith":
-						if (new Set(["int", "num", "string"]).has(memory.type)) {
-							type = memory.operand
+							memory.value = result
 						} else {
-							throw new SyntaxError("The value (" + memory.value + ") which is a '" + memory.type + "' can't be used in an arithmetic equation, since the value isn't a form of a number, or a string.")
+							result = memory.value
+						}
+						break;
+					case "arith":
+						if (new Set(["int", "num"]).has(memory.type)) {
+							type = parse.operator
+						} else {
+							throw new SyntaxError(`The value (${memory.value}) which is a '${memory.type}' can't be used with operator '${parse.operator}' because it's not a number.`)
 						}
 						break
 				}
 			}
-			return memory.value
+			return result
 		}
 		for (const parse of parses) {
 			switch (parse.type) {
